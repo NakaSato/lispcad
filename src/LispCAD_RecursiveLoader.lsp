@@ -157,11 +157,53 @@
 )
 
 ;; Command to load all LispCAD files recursively
-(defun c:LoadLispCADAll (/ base-dir)
+(defun c:LoadLispCADAll (/ base-dir found-path paths)
   (princ "\n=== LispCAD Recursive Loader ===")
   
-  ;; Try to determine the base directory
-  (setq base-dir "c:\\Users\\witch\\OneDrive\\Desktop\\lispcad\\src")
+  ;; Try multiple potential paths to locate the source directory
+  (setq paths (list
+    ;; Try *lispcad-root* global variable first if it exists
+    (if (boundp '*lispcad-root*) 
+        (strcat (vl-string-translate "/" "\\" *lispcad-root*) "\\src")
+        nil)
+    
+    ;; Standard installation paths
+    "c:\\Users\\witch\\OneDrive\\Desktop\\lispcad\\src"
+    "c:\\lispcad\\src"
+    "c:\\Program Files\\lispcad\\src"
+    "c:\\Program Files (x86)\\lispcad\\src"
+    
+    ;; Environment variable
+    (if (getenv "LISPCAD_PATH")
+        (strcat (getenv "LISPCAD_PATH") "\\src")
+        nil)
+    
+    ;; Current user profile paths
+    (if (getenv "USERPROFILE") 
+        (strcat (getenv "USERPROFILE") "\\OneDrive\\Desktop\\lispcad\\src")
+        nil)
+    (if (getenv "USERPROFILE") 
+        (strcat (getenv "USERPROFILE") "\\Desktop\\lispcad\\src")
+        nil)
+    
+    ;; Public documents
+    "c:\\Users\\Public\\Documents\\lispcad\\src"
+  ))
+  
+  ;; Find first valid path
+  (setq found-path nil)
+  (foreach path paths
+    (if (and (not found-path) path (vl-file-directory-p path))
+      (setq found-path path)
+    )
+  )
+  
+  ;; Use the found path or fall back to original
+  (setq base-dir (if found-path 
+                    found-path 
+                    "c:\\Users\\witch\\OneDrive\\Desktop\\lispcad\\src"))
+  
+  (princ (strcat "\nAttempting to use base directory: " base-dir))
   
   ;; Check if base directory exists
   (if (vl-file-directory-p base-dir)

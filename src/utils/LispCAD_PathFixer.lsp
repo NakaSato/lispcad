@@ -20,8 +20,31 @@
   ))
   
   (setq win-paths (list
+    ;; Standard user paths
+    "C:/Users/witch/OneDrive/Desktop/lispcad"
     "C:/Users/witch/OneDrive/My Files/CAD/lispcad"
-    "C:/Users/chanthawat/OneDrive/My Files/CAD/lispcad"
+    
+    ;; Network paths
+    "C:/lispcad"
+    "D:/lispcad"
+    
+    ;; Program Files locations
+    "C:/Program Files/lispcad"
+    "C:/Program Files (x86)/lispcad"
+    
+    ;; All users location
+    "C:/Users/Public/Documents/lispcad"
+    
+    ;; Current user dynamic paths
+    (if (getenv "USERPROFILE") 
+        (strcat (getenv "USERPROFILE") "/OneDrive/Desktop/lispcad")
+        nil)
+    (if (getenv "USERPROFILE") 
+        (strcat (getenv "USERPROFILE") "/Desktop/lispcad") 
+        nil)
+    
+    ;; Environment variable if set
+    (getenv "LISPCAD_PATH")
   ))
   
   (princ "\n\nChecking known locations:")
