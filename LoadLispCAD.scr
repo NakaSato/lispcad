@@ -1,0 +1,5 @@
+; LoadLispCAD.scr
+; Load all LispCAD applications during a CAD session
+; Created: May 21, 2025
+(load "C:/Users/witch/OneDrive/Desktop/lispcad/Load.lsp")
+(alert "LispCAD and all modules loaded successfully!")

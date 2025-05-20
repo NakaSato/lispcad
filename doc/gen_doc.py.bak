@@ -1,0 +1,437 @@
+#!/usr/bin/env python3
+"""
+LispCAD Documentation Generator
+------------------------------
+This script generates documentation for LispCAD by parsing the LISP files
+and extracting documentation comments.
+
+Created: May 19, 2025
+Updated: May 19, 2025 - Added PDF generation capability
+"""
+
+import os
+import re
+import sys
+import datetime
+import argparse
+from weasyprint import HTML, CSS
+from weasyprint.text.fonts import FontConfiguration
+
+# Configuration
+LISPCAD_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+OUTPUT_DIR = os.path.join(LISPCAD_DIR, "doc", "generated")
+README_PATH = os.path.join(LISPCAD_DIR, "README.md")
+PDF_DIR = os.path.join(OUTPUT_DIR, "pdf")
+
+
+def extract_command_info(file_path):
+    """Extract command information from a LISP file."""
+    commands = []
+    command_descriptions = {}
+    description = ""
+    category = get_category_from_path(file_path)
+    
+    with open(file_path, 'r', encoding='utf-8', errors='replace') as f:
+        content = f.read()
+    
+    # Extract file description
+    desc_match = re.search(r';;;.*?===== (.*?) =====', content)
+    if desc_match:
+        description = desc_match.group(1)
+    
+    # Try to get more detailed command descriptions
+    section_matches = re.finditer(r';;;.*?===== (.*?) =====.*?(?=;;;|$)', content, re.DOTALL)
+    sections = {}
+    for match in section_matches:
+        section_name = match.group(1).strip()
+        section_text = match.group(0)
+        sections[section_name] = section_text
+    
+    # Extract commands and their descriptions
+    command_pattern = r'\(defun\s+c:([A-Za-z0-9_-]+).*?(?:/.*?)?'
+    command_matches = re.finditer(command_pattern, content, re.DOTALL)
+    
+    for match in command_matches:
+        command_name = match.group(1)
+        commands.append(command_name)
+        
+        # Look for a description before the command
+        cmd_start = match.start()
+        desc_before = content[:cmd_start].rfind(';;;')
+        if desc_before != -1:
+            cmd_desc_text = content[desc_before:cmd_start]
+            cmd_desc_match = re.search(r';;;\s*(.*?)$', cmd_desc_text, re.MULTILINE)
+            if cmd_desc_match:
+                cmd_desc = cmd_desc_match.group(1).strip()
+                command_descriptions[command_name] = cmd_desc
+        
+        # If no description found, try to use section title
+        if command_name not in command_descriptions:
+            for section_name, section_text in sections.items():
+                if match.group(0) in section_text:
+                    command_descriptions[command_name] = section_name
+                    break
+    
+    # If still no description, use file description
+    for command_name in commands:
+        if command_name not in command_descriptions:
+            command_descriptions[command_name] = description
+    
+    return {
+        'name': os.path.basename(file_path),
+        'description': description,
+        'commands': commands,
+        'command_descriptions': command_descriptions,
+        'path': file_path,
+        'category': category
+    }
+
+
+def get_category_from_path(file_path):
+    """Determine category based on file path."""
+    path = file_path.lower()
+    if '/core/' in path:
+        return "Core Commands"
+    elif '/drawing/' in path:
+        return "Drawing Management"
+    elif '/navigation/' in path:
+        return "Navigation Utilities"
+    elif '/publishing/' in path:
+        return "Publishing Tools"
+    elif '/document/' in path:
+        return "Document Maintenance"
+    elif '/advanced/' in path:
+        return "Advanced Objects" 
+    elif '/utils/' in path:
+        return "System Utilities"
+    else:
+        # Default category based on filename for files not in category folders
+        filename = os.path.basename(path)
+        if filename.startswith(('alias', 'cclip')):
+            return "Core Commands"
+        elif filename.startswith(('zoom', 'switch')):
+            return "Navigation Utilities"
+        elif filename.startswith('pub'):
+            return "Publishing Tools"
+        elif filename.startswith(('master', 'autopurge')):
+            return "Document Maintenance"
+        elif filename.startswith(('flex', 'beam')):
+            return "Advanced Objects"
+        elif filename.startswith(('create', 'unit', 'bring')):
+            return "Drawing Management"
+        else:
+            return "System Utilities"
+            
+
+def generate_markdown_docs(include_pdf=True):
+    """Generate markdown documentation."""
+    if not os.path.exists(OUTPUT_DIR):
+        os.makedirs(OUTPUT_DIR)
+    
+    # Create PDF directory if it doesn't exist and if we're generating PDFs
+    if include_pdf and not os.path.exists(PDF_DIR):
+        os.makedirs(PDF_DIR)
+    
+    # Find all LISP files
+    lisp_files = []
+    src_dir = os.path.join(LISPCAD_DIR, "src")
+    
+    # Check if src directory exists
+    if os.path.exists(src_dir):
+        # Primary: search in src directory structure
+        for category_dir in ['core', 'drawing', 'navigation', 'publishing', 'document', 'advanced', 'utils']:
+            category_path = os.path.join(src_dir, category_dir)
+            if os.path.exists(category_path):
+                for file in os.listdir(category_path):
+                    if file.endswith(('.lsp', '.lisp', '.LSP')) and not file.endswith('.old'):
+                        lisp_files.append(os.path.join(category_path, file))
+        
+        # Also check for any files directly in src
+        for file in os.listdir(src_dir):
+            if file.endswith(('.lsp', '.lisp', '.LSP')) and not file.endswith('.old'):
+                lisp_files.append(os.path.join(src_dir, file))
+    
+    # Always include the main loader file
+    loader_path = os.path.join(LISPCAD_DIR, "LispCAD_Loader.lsp")
+    if os.path.exists(loader_path):
+        lisp_files.append(loader_path)
+    
+    # Extract command info
+    file_info = []
+    for file_path in lisp_files:
+        info = extract_command_info(file_path)
+        if info['commands']:  # Only include files with commands
+            file_info.append(info)
+    
+    # Better command descriptions for common commands
+    default_descriptions = {
+        'BA': "Bring objects above a reference object",
+        'BB': "Send selected objects to back",
+        'BF': "Bring selected objects to front",
+        'ZZ': "Zoom to selected objects",
+        'ZV': "Zoom to extents (view all)",
+        'ZB': "Zoom to previous view",
+        'ZA': "Zoom all",
+        'ZW': "Zoom window",
+        'SL': "Switch between layouts",
+        'CT': "Clipboard utility for text",
+        'SS': "Select similar objects",
+        'PP': "Publish drawings",
+        'C': "Copy objects command shortcut",
+        'N': "Move objects command shortcut",
+        'M': "Move objects command shortcut",
+        'AutoPurge': "Purge unused objects from drawing",
+        'AutoPurgeAfterQSave': "Auto-purge after QuickSave",
+        'StopPurge': "Stop auto-purge functionality",
+        'XRefManager': "Manage external references",
+        'PUBPAPER': "Publish paper space layouts",
+        'Flex': "Create flex duct from centerline",
+        'Flex2PointPline': "Create polyline-based flex duct",
+        'Flex2PointSpline': "Create spline-based flex duct",
+        'CreateBeamGrid': "Create a grid of beams",
+        'CreateScale': "Create a scale bar",
+        'UnitScale': "Scale objects with unit conversion",
+        'LoadLispCAD': "Load all LispCAD commands",
+        'ListCommands': "Show list of available commands",
+        'VerifyLispCAD': "Verify installation and loading status"
+    }
+    
+    # Apply better descriptions where available
+    for info in file_info:
+        for cmd in info['commands']:
+            if cmd in default_descriptions and (cmd not in info['command_descriptions'] or 
+                                              info['command_descriptions'][cmd] == "" or
+                                              "Created:" in info['command_descriptions'][cmd] or
+                                              info['command_descriptions'][cmd] == info['description'] or
+                                              info['command_descriptions'][cmd] == f"Command from {info['name']}"):
+                info['command_descriptions'][cmd] = default_descriptions[cmd]
+    
+    # Generate README
+    with open(README_PATH, 'w', encoding='utf-8') as f:
+        f.write("# LispCAD - AutoCAD LISP Utilities\n\n")
+        f.write("A collection of productivity-enhancing AutoCAD LISP utilities for improved CAD workflow. This library includes standardized error handling, a comprehensive utility library, and a wide range of useful commands for CAD professionals.\n\n")
+        f.write(f"Last updated: {datetime.datetime.now().strftime('%Y-%m-%d')}\n\n")
+        
+        # Write directory structure
+        f.write("## Directory Structure\n\n")
+        f.write("```\n")
+        f.write("lispcad/\n")
+        f.write("├── LispCAD_Loader.lsp   # Main loader file\n")
+        f.write("├── src/                 # Source files directory\n")
+        f.write("│   ├── core/            # Core commands\n")
+        f.write("│   ├── drawing/         # Drawing management commands\n")
+        f.write("│   ├── navigation/      # Navigation and zoom commands\n")
+        f.write("│   ├── publishing/      # Publishing and printing commands\n")
+        f.write("│   ├── document/        # Document maintenance commands\n")
+        f.write("│   ├── advanced/        # Advanced object creation commands\n")
+        f.write("│   └── utils/           # Utility functions\n")
+        f.write("└── doc/                 # Documentation\n")
+        f.write("    ├── gen_doc.py       # Documentation generator\n")
+        f.write("    └── generated/       # Generated documentation files\n")
+        f.write("```\n\n")
+        
+        # Write summary
+        f.write("## Overview\n\n")
+        f.write("LispCAD provides productivity-enhancing commands for AutoCAD users. It includes:\n\n")
+        f.write("- **Improved drawing management** with commands for scaling, draw order, and unit conversion\n")
+        f.write("- **Enhanced navigation** with quick zoom and layout switching commands\n")
+        f.write("- **Document management** with auto-purge and XRef management tools\n")
+        f.write("- **Advanced objects** for creating beams, ducts, and other specialized elements\n")
+        f.write("- **System utilities** for loading and managing LispCAD commands\n\n")
+        
+        f.write("## Available Commands\n\n")
+        
+        # Group files by category
+        categories = {
+            "Core Commands": [],
+            "Drawing Management": [],
+            "Navigation Utilities": [],
+            "Publishing Tools": [],
+            "Document Maintenance": [],
+            "Advanced Objects": [],
+            "System Utilities": []
+        }
+        
+        # Map files to categories based on their 'category' field
+        for info in file_info:
+            category = info['category']
+            if category in categories:
+                categories[category].append(info)
+            else:
+                categories["System Utilities"].append(info)
+        
+        # Write each category
+        for category, items in categories.items():
+            if items:
+                f.write(f"### {category}\n\n")
+                f.write("| Command | Description | File |\n")
+                f.write("|---------|-------------|------|\n")
+                
+                for info in sorted(items, key=lambda x: x['name']):
+                    if info['commands']:
+                        for cmd in sorted(info['commands']):
+                            cmd_desc = info['command_descriptions'].get(cmd, info['description'])
+                            # Clean up description
+                            if cmd_desc:
+                                cmd_desc = cmd_desc.replace('\n', ' ').strip()
+                                if len(cmd_desc) > 80:
+                                    cmd_desc = cmd_desc[:77] + '...'
+                            else:
+                                cmd_desc = "Command from " + info['name']
+                                
+                            f.write(f"| {cmd} | {cmd_desc} | {info['name']} |\n")
+                f.write("\n")
+        
+        # Add usage information
+        f.write("## Usage Examples\n\n")
+        
+        # Draw order examples
+        f.write("### Draw Order Management\n\n")
+        f.write("```lisp\n")
+        f.write("; Bring selected objects to front\n")
+        f.write("BF\n\n")
+        f.write("; Send selected objects to back\n")
+        f.write("BB\n\n")
+        f.write("; Bring objects above a reference object\n")
+        f.write("BA\n")
+        f.write("```\n\n")
+        
+        # Zoom examples
+        f.write("### Quick Zoom Commands\n\n")
+        f.write("```lisp\n")
+        f.write("; Zoom to selected object(s)\n")
+        f.write("ZZ\n\n")
+        f.write("; Zoom to extents (view all)\n")
+        f.write("ZV\n")
+        f.write("```\n\n")
+        
+        # XRef example
+        f.write("### XRef Management\n\n")
+        f.write("```lisp\n")
+        f.write("; Open XRef Manager to update references across multiple drawings\n")
+        f.write("XRefManager\n")
+        f.write("```\n\n")
+        
+        f.write("## Installation\n\n")
+        f.write("1. Copy the entire `lispcad` directory to your AutoCAD support directory\n")
+        f.write("2. Load the `LispCAD_Loader.lsp` file in AutoCAD\n")
+        f.write("3. Type `LoadLispCAD` to load all commands\n")
+        f.write("4. Type `ListCommands` to see all available commands\n\n")
+        
+        f.write("## License\n\n")
+        f.write("Copyright © 2025. All rights reserved.\n")
+    
+    print(f"Documentation generated at {README_PATH}")
+
+
+def generate_pdf_from_markdown(markdown_file, output_pdf):
+    """Generate a PDF file from a Markdown file using WeasyPrint."""
+    # Create output directory if it doesn't exist
+    os.makedirs(os.path.dirname(output_pdf), exist_ok=True)
+    
+    # Read the markdown content
+    with open(markdown_file, 'r', encoding='utf-8') as f:
+        markdown_content = f.read()
+    
+    # Add basic HTML structure around the markdown content
+    # Note: This is a simplified approach - we're assuming the markdown is already HTML-like
+    # A more robust approach would use a markdown parser like python-markdown
+    html_content = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>LispCAD Documentation</title>
+        <style>
+            body {{
+                font-family: Arial, sans-serif;
+                line-height: 1.6;
+                padding: 20px;
+                max-width: 210mm; /* A4 width */
+                margin: 0 auto;
+            }}
+            h1, h2, h3, h4 {{
+                color: #333;
+                margin-top: 24px;
+            }}
+            h1 {{
+                font-size: 24pt;
+                border-bottom: 1px solid #ddd;
+                padding-bottom: 10px;
+            }}
+            h2 {{
+                font-size: 18pt;
+                border-bottom: 1px solid #eee;
+                padding-bottom: 5px;
+            }}
+            h3 {{ font-size: 14pt; }}
+            h4 {{ font-size: 12pt; }}
+            code, pre {{
+                font-family: Consolas, Monaco, 'Andale Mono', monospace;
+                background-color: #f5f5f5;
+                border-radius: 3px;
+                padding: 2px 5px;
+                font-size: 85%;
+            }}
+            pre {{
+                padding: 10px;
+                overflow: auto;
+                border: 1px solid #ddd;
+                margin: 15px 0;
+            }}
+            table {{
+                border-collapse: collapse;
+                width: 100%;
+                margin: 20px 0;
+            }}
+            th, td {{
+                text-align: left;
+                padding: 8px;
+                border: 1px solid #ddd;
+            }}
+            th {{
+                background-color: #f2f2f2;
+                font-weight: bold;
+            }}
+            tr:nth-child(even) {{
+                background-color: #f9f9f9;
+            }}
+            a {{
+                color: #0366d6;
+                text-decoration: none;
+            }}
+            a:hover {{
+                text-decoration: underline;
+            }}
+            img {{
+                max-width: 100%;
+            }}
+            blockquote {{
+                margin: 20px 0;
+                padding: 10px 20px;
+                border-left: 4px solid #ddd;
+                background-color: #f9f9f9;
+            }}
+            @page {{
+                size: A4;
+                margin: 2cm;
+            }}
+        </style>
+    </head>
+    <body>
+        {markdown_content}
+    </body>
+    </html>
+    """
+    
+    # Convert HTML to PDF
+    font_config = FontConfiguration()
+    html = HTML(string=html_content)
+    html.write_pdf(output_pdf, stylesheets=[])
+    
+    print(f"PDF generated: {output_pdf}")
+    return output_pdf
+
+
+if __name__ == "__main__":
+    generate_markdown_docs()
