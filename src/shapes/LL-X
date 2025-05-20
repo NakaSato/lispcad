@@ -1,0 +1,19 @@
+;; ===== L-SHAPE PROFILES =====
+;; Standard angle profiles data
+;; Format: (name d bf t)
+;; d = vertical leg length
+;; bf = horizontal leg length
+;; t = thickness
+
+((-1 "L-SHAPE DATA")  ;; File identifier
+ (1 "L2X2X1/4" 2.00 2.00 0.25)
+ (1 "L2-1/2X2-1/2X1/4" 2.50 2.50 0.25)
+ (1 "L3X3X1/4" 3.00 3.00 0.25)
+ (1 "L3-1/2X3-1/2X1/4" 3.50 3.50 0.25)
+ (1 "L4X4X1/4" 4.00 4.00 0.25)
+ (1 "L4X4X3/8" 4.00 4.00 0.375)
+ (1 "L5X5X3/8" 5.00 5.00 0.375)
+ (1 "L6X6X3/8" 6.00 6.00 0.375)
+ (1 "L6X6X1/2" 6.00 6.00 0.50)
+ (1 "L8X8X1/2" 8.00 8.00 0.50)
+ (1 "L8X8X5/8" 8.00 8.00 0.625))

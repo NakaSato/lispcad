@@ -1,0 +1,14 @@
+   ;; ===== C-SHAPE PROFILES =====
+;; Standard channel profiles data
+;; Format: (name d bf tf tw)
+;; d = overall depth
+;; bf = flange width
+;; tf = flange thickness
+;; tw = web thickness
+
+((-1 "C-SHAPE DATA")  ;; File identifier
+ (1 "C100X6.5" 100 50 6.5 13)
+ (1 "C150X9" 150 75 9 14)
+ (1 "C200X9" 200 80 9 14)
+ (1 "C250X9" 250 90 9 14)
+ (1 "C300X9" 300 100 9 14))
