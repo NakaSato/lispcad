@@ -49,15 +49,45 @@
                  (list (strcat *lispcad-root* "/LoadAliases.lsp")))))
       (princ " - Success!")
       (princ " - Error loading aliases.")
-    )
-
-    ;; Load the utility functions first to ensure error handling is available
-    (princ "\n=== LOADING UTILITY FUNCTIONS ===")
-    (if (not (vl-catch-all-error-p 
+    )    ;; Load the utility functions using global loader if possible
+    (cond
+      ;; First try the GlobalUtilLoader if available
+      ((findfile (strcat *lispcad-root* "/GlobalUtilLoader.lsp"))
+       (progn
+         (load (strcat *lispcad-root* "/GlobalUtilLoader.lsp"))
+         (if (fboundp 'load-utils)
+           (load-utils)
+           (princ "\n=== LOADING UTILITY FUNCTIONS === - Error: Global loader found but function missing."))
+       ))
+       
+      ;; Second try utility loader directly
+      ((not (vl-catch-all-error-p 
                (vl-catch-all-apply 'load 
-                 (list (strcat *lispcad-root* "/src/utils/LispCAD_Utils.lsp")))))
-      (princ " - Success!")
-      (princ " - Error loading utility functions.")
+                 (list (strcat *lispcad-root* "/src/utils/LispCAD_UtilityLoader.lsp")))))
+       ;; If utility loader was found, use it to load all utilities
+       (if (fboundp 'utils:load-all-utilities)
+         (utils:load-all-utilities)
+         ;; Legacy fallback if function not defined
+         (progn
+           (princ "\n=== LOADING UTILITY FUNCTIONS ===")
+           (if (not (vl-catch-all-error-p 
+                      (vl-catch-all-apply 'load 
+                        (list (strcat *lispcad-root* "/src/utils/LispCAD_Utils.lsp")))))
+             (princ " - Success!")
+             (princ " - Error loading utility functions.")
+           ))
+       ))
+       
+      ;; Direct loading as final fallback
+      (t
+        (progn
+          (princ "\n=== LOADING UTILITY FUNCTIONS ===")
+          (if (not (vl-catch-all-error-p 
+                     (vl-catch-all-apply 'load 
+                       (list (strcat *lispcad-root* "/src/utils/LispCAD_Utils.lsp")))))
+            (princ " - Success!")
+            (princ " - Error loading utility functions.")
+          )))
     )
     
     ;; Directly load the structural shape module using a simple path

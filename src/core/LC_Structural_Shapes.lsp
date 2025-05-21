@@ -2,6 +2,26 @@
 ;; Functions for drawing standard structural shapes
 ;; Created: December 2023
 
+;; Try to load utility functions if they exist
+(if (not (boundp '*lispcad-utils-version*))
+  (progn
+    (princ "\nChecking for utility loader...")
+    (cond
+      ;; Try to load from the utility loader
+      ((findfile "src/utils/LispCAD_UtilityLoader.lsp")
+       (load "src/utils/LispCAD_UtilityLoader.lsp")
+       (if (fboundp 'utils:load-all-utilities)
+         (utils:load-all-utilities)))
+      
+      ;; Try direct path
+      ((findfile "c:/Users/witch/OneDrive/Desktop/lispcad/src/utils/LispCAD_UtilityLoader.lsp")
+       (load "c:/Users/witch/OneDrive/Desktop/lispcad/src/utils/LispCAD_UtilityLoader.lsp")
+       (if (fboundp 'utils:load-all-utilities)
+         (utils:load-all-utilities)))
+    )
+  )
+)
+
 ;; Global variables to store shape data
 (setq *lispcad-shape-data* nil)
 
@@ -533,5 +553,81 @@
     )
     (princ "\nCommand cancelled - no shape selected")
   )
+  (princ)
+)
+
+;; Test command for structural shapes module
+(defun c:TestStructuralShapes (/ file-path)
+  (princ "\n=== TESTING STRUCTURAL SHAPES MODULE ===")
+  
+  ;; Check path resolver
+  (princ "\n\nPath Resolver Status:")
+  (princ "\n----------------------------")
+  (if (fboundp 'paths:find-lib)
+    (princ "\npaths:find-lib function: Available")
+    (princ "\npaths:find-lib function: NOT FOUND")
+  )
+  
+  ;; Try to find shape files
+  (princ "\n\nShape Files Status:")
+  (princ "\n----------------------------")
+  
+  ;; Check for H-shapes
+  (setq file-path nil)
+  (if (fboundp 'paths:find-lib)
+    (setq file-path (paths:find-lib "shapes" "HH-X"))
+    (setq file-path (findfile "lib/shapes/HH-X"))
+  )
+  (if (null file-path) (setq file-path (findfile "src/shapes/HH-X")))
+  (princ (strcat "\nH-shapes (HH-X): " (if file-path file-path "NOT FOUND")))
+  
+  ;; Check for I-shapes
+  (setq file-path nil)
+  (if (fboundp 'paths:find-lib)
+    (setq file-path (paths:find-lib "shapes" "IB-X"))
+    (setq file-path (findfile "lib/shapes/IB-X"))
+  )
+  (if (null file-path) (setq file-path (findfile "src/shapes/IB-X")))
+  (princ (strcat "\nI-shapes (IB-X): " (if file-path file-path "NOT FOUND")))
+  
+  ;; Check for C-shapes
+  (setq file-path nil)
+  (if (fboundp 'paths:find-lib)
+    (setq file-path (paths:find-lib "shapes" "CC-X"))
+    (setq file-path (findfile "lib/shapes/CC-X"))
+  )
+  (if (null file-path) (setq file-path (findfile "src/shapes/CC-X")))
+  (princ (strcat "\nC-shapes (CC-X): " (if file-path file-path "NOT FOUND")))
+  
+  ;; Check for L-shapes
+  (setq file-path nil)
+  (if (fboundp 'paths:find-lib)
+    (setq file-path (paths:find-lib "shapes" "LL-X"))
+    (setq file-path (findfile "lib/shapes/LL-X"))
+  )
+  (if (null file-path) (setq file-path (findfile "src/shapes/LL-X")))
+  (princ (strcat "\nL-shapes (LL-X): " (if file-path file-path "NOT FOUND")))
+  
+  ;; Test shape loading
+  (princ "\n\nShape Loading Test:")
+  (princ "\n----------------------------")
+  (foreach shape-type (list "HH-X" "IB-X" "CC-X" "LL-X")
+    (princ (strcat "\nLoading " shape-type "... "))
+    (setq shape-data (load-shape-data shape-type))
+    (if shape-data
+      (princ (strcat "SUCCESS - Found " (itoa (- (length shape-data) 1)) " shapes"))
+      (princ "FAILED"))
+  )
+  
+  ;; Check for commands
+  (princ "\n\nShape Commands Status:")
+  (princ "\n----------------------------")
+  (princ (strcat "\nHH command: " (if (fboundp 'c:HH) "Available" "NOT FOUND")))
+  (princ (strcat "\nIB command: " (if (fboundp 'c:IB) "Available" "NOT FOUND")))
+  (princ (strcat "\nCC command: " (if (fboundp 'c:CC) "Available" "NOT FOUND")))
+  (princ (strcat "\nLL command: " (if (fboundp 'c:LL) "Available" "NOT FOUND")))
+  (princ (strcat "\nSS command: " (if (fboundp 'c:SS) "Available" "NOT FOUND")))
+  
+  (princ "\n\nTest completed.")
   (princ)
 )

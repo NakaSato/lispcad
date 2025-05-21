@@ -79,6 +79,17 @@
   )
 )
 
+;; Try to load utility loader if available
+(princ "\nLoading utility functions...")
+(if (findfile (strcat *shapes-root* "/src/utils/LispCAD_UtilityLoader.lsp"))
+  (progn
+    (load (strcat *shapes-root* "/src/utils/LispCAD_UtilityLoader.lsp"))
+    (if (fboundp 'utils:load-all-utilities)
+      (utils:load-all-utilities)
+      (princ " - Utility loader found but function missing")))
+  (princ " - No utility loader found, continuing without utilities")
+)
+
 ;; Load the structural shapes module directly
 (princ "\nLoading structural shapes module...")
 (if (not (vl-catch-all-error-p 
