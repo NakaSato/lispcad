@@ -28,6 +28,12 @@ if exist "C:\Program Files\Gstarsoft\GstarCAD2025\gcad.exe" (
     goto found_autocad
 )
 
+if exist "C:\Program Files\Gstarsoft\GstarCAD2024\gcad.exe" (
+    set AUTOCAD_EXE="C:\Program Files\Gstarsoft\GstarCAD2024\gcad.exe"
+    set ACAD_YEAR=2024
+    goto found_autocad
+)
+
 if exist "C:\Program Files\Gstarsoft\GstarCAD2021\gcad.exe" (
     set AUTOCAD_EXE="C:\Program Files\Gstarsoft\GstarCAD2021\gcad.exe"
     set ACAD_YEAR=2021
