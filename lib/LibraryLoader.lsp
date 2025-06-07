@@ -12,6 +12,7 @@
   "LibraryManager.lsp"
   "DataValidator.lsp"
   "IntegrationTester.lsp"
+  "SupportingFilesTest.lsp"
   "ElectricalComponents.lsp"
   "PlumbingComponents.lsp" 
   "HVACComponents.lsp"
