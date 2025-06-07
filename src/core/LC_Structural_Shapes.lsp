@@ -2,6 +2,31 @@
 ;; Functions for drawing standard structural shapes
 ;; Created: December 2023
 
+;; First, ensure function utilities are loaded
+(if (or (not (boundp '*lispcad-function-utils-loaded*))
+        (not (fboundp 'util:fboundp)))
+  (progn
+    (princ "\nLoading function utilities...")
+    (cond
+      ;; Try relative path
+      ((findfile "src/utils/LispCAD_FunctionUtils.lsp")
+       (progn
+         (load "src/utils/LispCAD_FunctionUtils.lsp")
+         (if (not (fboundp 'util:fboundp))
+           (princ "\nWarning: Function utilities loaded but util:fboundp not defined"))
+       ))
+      ;; Try absolute path
+      ((findfile "c:/Users/witch/OneDrive/Desktop/lispcad/src/utils/LispCAD_FunctionUtils.lsp")
+       (progn
+         (load "c:/Users/witch/OneDrive/Desktop/lispcad/src/utils/LispCAD_FunctionUtils.lsp")
+         (if (not (fboundp 'util:fboundp))
+           (princ "\nWarning: Function utilities loaded but util:fboundp not defined"))
+       ))
+      (T (princ "\nError: Could not load function utilities"))
+    )
+  )
+)
+
 ;; Try to load utility functions if they exist
 (if (not (boundp '*lispcad-utils-version*))
   (progn
@@ -10,13 +35,13 @@
       ;; Try to load from the utility loader
       ((findfile "src/utils/LispCAD_UtilityLoader.lsp")
        (load "src/utils/LispCAD_UtilityLoader.lsp")
-       (if (fboundp 'utils:load-all-utilities)
+       (if (util:fboundp 'utils:load-all-utilities)
          (utils:load-all-utilities)))
       
       ;; Try direct path
       ((findfile "c:/Users/witch/OneDrive/Desktop/lispcad/src/utils/LispCAD_UtilityLoader.lsp")
        (load "c:/Users/witch/OneDrive/Desktop/lispcad/src/utils/LispCAD_UtilityLoader.lsp")
-       (if (fboundp 'utils:load-all-utilities)
+       (if (util:fboundp 'utils:load-all-utilities)
          (utils:load-all-utilities)))
     )
   )
@@ -26,31 +51,47 @@
 (setq *lispcad-shape-data* nil)
 
 ;; Load shape data from file using path resolver
-(defun load-shape-data (shape-type / file-path shape-data shape-file)
-  ;; Check if path resolver is loaded
-  (if (not (and (fboundp 'paths:find-lib) (fboundp 'paths:find-src)))
+(defun load-shape-data (shape-type / file-path shape-data shape-file)  ;; Check if path resolver is loaded
+  (if (not (boundp '*lispcad-search-paths*))
     (progn
-      (princ "\nLoading path resolver...")
-      (if (findfile "lib/LispCAD_PathResolver.lsp")
-        (load "lib/LispCAD_PathResolver.lsp")
-        (if (findfile "c:/Users/witch/OneDrive/Desktop/lispcad/lib/LispCAD_PathResolver.lsp")
-          (load "c:/Users/witch/OneDrive/Desktop/lispcad/lib/LispCAD_PathResolver.lsp")
-          (princ "\nWarning: Could not load path resolver")))
+      (princ "\nInitializing path resolver...")
+      (cond
+        ;; Try relative path
+        ((findfile "lib/LispCAD_PathResolver.lsp")
+         (progn
+           (load "lib/LispCAD_PathResolver.lsp")
+           (if (fboundp 'paths:initialize)
+             (paths:initialize))))
+        
+        ;; Try absolute path
+        ((findfile "c:/Users/witch/OneDrive/Desktop/lispcad/lib/LispCAD_PathResolver.lsp")
+         (progn
+           (load "c:/Users/witch/OneDrive/Desktop/lispcad/lib/LispCAD_PathResolver.lsp")
+           (if (fboundp 'paths:initialize)
+             (paths:initialize))))
+        
+        (T (princ "\nWarning: Could not load path resolver"))
+      )
     ))
-  
-  ;; Try to locate shape data file
+    ;; Try to locate shape data file
   (cond
-    ;; First try: Use path resolver if available 
-    ((fboundp 'paths:find-lib)
-      (setq file-path (paths:find-lib "shapes" shape-type))
-      (if (null file-path) 
-        (setq file-path (paths:find-src "shapes" shape-type))))
+    ;; First try local paths
+    ((findfile (strcat "lib/shapes/" shape-type))
+     (setq file-path (findfile (strcat "lib/shapes/" shape-type))))
+    ((findfile (strcat "src/shapes/" shape-type))
+     (setq file-path (findfile (strcat "src/shapes/" shape-type))))
     
-    ;; Legacy: Try direct lookup if path resolver is unavailable
-    (t
-      (setq file-path (findfile (strcat "lib/shapes/" shape-type)))
-      (if (null file-path)
-        (setq file-path (findfile (strcat "src/shapes/" shape-type)))))
+    ;; Try absolute paths
+    ((findfile (strcat "c:/Users/witch/OneDrive/Desktop/lispcad/lib/shapes/" shape-type))
+     (setq file-path (findfile (strcat "c:/Users/witch/OneDrive/Desktop/lispcad/lib/shapes/" shape-type))))
+    ((findfile (strcat "c:/Users/witch/OneDrive/Desktop/lispcad/src/shapes/" shape-type))
+     (setq file-path (findfile (strcat "c:/Users/witch/OneDrive/Desktop/lispcad/src/shapes/" shape-type))))
+    
+    ;; Use path resolver as last resort if available
+    ((and (fboundp 'paths:find-lib) (paths:find-lib "shapes" shape-type))
+     (setq file-path (paths:find-lib "shapes" shape-type)))
+    ((and (fboundp 'paths:find-src) (paths:find-src "shapes" shape-type))
+     (setq file-path (paths:find-src "shapes" shape-type)))
   )
   
   ;; Display diagnostic info
@@ -622,9 +663,9 @@
   ;; Check for commands
   (princ "\n\nShape Commands Status:")
   (princ "\n----------------------------")
-  (princ (strcat "\nHH command: " (if (fboundp 'c:HH) "Available" "NOT FOUND")))
-  (princ (strcat "\nIB command: " (if (fboundp 'c:IB) "Available" "NOT FOUND")))
-  (princ (strcat "\nCC command: " (if (fboundp 'c:CC) "Available" "NOT FOUND")))
+  (princ (strcat "\nHH command: " (if (util:fboundp 'c:HH) "Available" "NOT FOUND")))
+  (princ (strcat "\nIB command: " (if (util:fboundp 'c:IB) "Available" "NOT FOUND")))
+  (princ (strcat "\nCC command: " (if (util:fboundp 'c:CC) "Available" "NOT FOUND")))
   (princ (strcat "\nLL command: " (if (fboundp 'c:LL) "Available" "NOT FOUND")))
   (princ (strcat "\nSS command: " (if (fboundp 'c:SS) "Available" "NOT FOUND")))
   

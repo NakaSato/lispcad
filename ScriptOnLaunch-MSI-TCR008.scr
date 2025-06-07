@@ -1,8 +1,8 @@
 ; LispCAD Auto-Loader Script 
-; Created by AutoCAD Launcher on Sat 06/07/2025 
+; Created by AutoCAD Launcher on Thu 05/22/2025 
  
 (alert "LispCAD Loader is starting. Please wait...") 
 (setvar "CMDECHO" 0) 
-(load "C:\Users\ENWUFT\OneDrive\Desktop\lispcad\Load.lsp") 
+(load "C:\Users\Chanthawat.K\OneDrive\Desktop\lispcad\Load.lsp") 
 (prompt "\nLispCAD loaded successfully! Type ListCommands to see available commands.") 
 (alert "LispCAD and all modules loaded successfully!") 

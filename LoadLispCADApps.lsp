@@ -65,6 +65,12 @@
   (princ "\nError loading recursive loader.")
 )
 
+;; Load LispCAD Applications
+;; Updated: May 25, 2025
+
+;; Load utility functions first
+(load (strcat *lispcad-root* "/src/utils/LC_TextUtils.lsp"))
+
 ;; Define a command to load all LispCAD applications
 (defun c:LoadLispCADApps ()
   (princ "\n=== Loading All LispCAD Applications ===")

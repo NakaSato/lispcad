@@ -5,7 +5,35 @@
 (defun c:LoadLispCADFixed (/ loader-path)
   (princ "\n=== LOADING LISPCAD (FIXED LOADER) ===")
   
-  ;; First try to load the GlobalUtilLoader
+  ;; First load our function utilities
+  (cond
+    ;; Try relative path
+    ((findfile "src/utils/LispCAD_FunctionUtils.lsp")
+     (progn
+       (princ "\nLoading function utilities...")
+       (load "src/utils/LispCAD_FunctionUtils.lsp")
+       (if (not (fboundp 'util:fboundp))
+         (princ "\nWarning: Function utilities loaded but util:fboundp not defined"))))
+       
+    ;; Try absolute path
+    ((findfile "c:/Users/witch/OneDrive/Desktop/lispcad/src/utils/LispCAD_FunctionUtils.lsp")
+     (progn
+       (princ "\nLoading function utilities from absolute path...")
+       (load "c:/Users/witch/OneDrive/Desktop/lispcad/src/utils/LispCAD_FunctionUtils.lsp")
+       (if (not (fboundp 'util:fboundp))
+         (princ "\nWarning: Function utilities loaded but util:fboundp not defined"))))
+    
+    (T (princ "\nError: Could not load function utilities"))
+  )
+  
+  ;; Verify function utilities loaded correctly
+  (if (not (fboundp 'util:fboundp))
+    (progn
+      (princ "\nError: Function utilities did not load properly")
+      (quit)
+    ))
+  
+  ;; Now load the GlobalUtilLoader
   (cond
     ;; Direct path
     ((findfile "GlobalUtilLoader.lsp")
@@ -18,10 +46,12 @@
      (progn
        (princ "\nLoading global utility loader from absolute path...")
        (load "c:/Users/witch/OneDrive/Desktop/lispcad/GlobalUtilLoader.lsp")))
+    
+    (T (princ "\nError: Could not load global utility loader"))
   )
   
-  ;; Check if we loaded the loader
-  (if (not (fboundp 'load-utils))
+  ;; Check if we loaded the loader using our new util:fboundp
+  (if (not (util:fboundp 'load-utils))
     (princ "\nWarning: Global utility loader not found")
     (progn
       ;; Load utilities using the global loader
@@ -43,6 +73,8 @@
      (progn
        (princ "\nLoading app path resolver from absolute path...")
        (load "c:/Users/witch/OneDrive/Desktop/lispcad/src/utils/LispCAD_AppPath.lsp")))
+    
+    (T (princ "\nError: Could not load app path resolver"))
   )
   
   ;; Try to load the structural shape module

@@ -41,29 +41,29 @@
         (load (findfile loc))
         (setq utils-file loc)
         
-        ;; If we loaded the UtilityLoader, use it
-        (if (member 'utils:load-all-utilities (atoms-family 1))
+        ;; If we loaded the UtilityLoader, use it (using our new util:fboundp)
+        (if (util:fboundp 'utils:load-all-utilities)
           (utils:load-all-utilities))
           
-        ;; Stop trying once we find and verify one works
+        ;; Stop trying once we find and verify one works using util:fboundp
         (if (or 
-              (member 'utils:setup-error-handler (atoms-family 1))
-              (member 'utils:find-utility (atoms-family 1))
+              (util:fboundp 'utils:setup-error-handler)
+              (util:fboundp 'utils:find-utility)
+              (util:fboundp 'utils:load-utility)
             )
-          (setq possible-locations nil)
+          (return)
         )
       )
     )
   )
   
-  ;; Return result
-  (if utils-file 
-    (progn 
-      (princ " - Success!")
-      T) 
-    (progn 
-      (princ " - Error loading utility functions.")
-      nil))
+  ;; Check if we successfully loaded utilities
+  (if (not utils-file)
+    (princ "\nError: Could not load any utility files")
+    (princ (strcat "\nSuccessfully loaded utilities from: " utils-file))
+  )
+  
+  (princ)
 )
 
 ;; Provide a Windows-specific version in case the system needs it
