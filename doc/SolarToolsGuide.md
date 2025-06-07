@@ -7,8 +7,9 @@ The Solar Project Tools module is a comprehensive set of CAD tools designed for 
 ## Available Commands
 
 ### Solar Array Design Tools
-- **SolarArray** - Create arrays of solar panels with proper spacing
+- **SolarArray** - Create arrays of solar panels with proper spacing and automatic GCR calculation
 - **OptimizeArray** - Find optimal array settings (tilt, azimuth, spacing) for your location
+- **SolarGCR** - Ground Coverage Ratio calculator with detailed analysis and recommendations
 
 ### Solar Analysis Tools
 - **SunPath** - Generate sun path diagrams and shadow projections
@@ -17,7 +18,7 @@ The Solar Project Tools module is a comprehensive set of CAD tools designed for 
 ### Solar Engineering Tools
 - **SolarSetback** - Calculate code-required setbacks for solar installations
 - **SolarStrings** - Design electrical string connections
-- **SolarInfoBlock** - Create system information tables with production estimates
+- **SolarInfoBlock** - Create system information tables with production estimates and GCR data
 
 ### Component Libraries
 - **SolarLib** - Insert standard solar components (panels, inverters, etc.)
@@ -73,6 +74,20 @@ CreateSolarLayers
    - Choose visualization type (diagram, animation, or both)
    - Review the generated sun path arcs and shadow projections
 
+4. **SolarGCR** (Ground Coverage Ratio Calculator)
+   - Type `SolarGCR` at the command prompt
+   - Choose panel type from library or enter custom dimensions
+   - Enter number of panels and array configuration
+   - Define ground area (direct input, rectangular bounds, or drawing selection)
+   - Review comprehensive GCR analysis including:
+     - Calculated GCR percentage
+     - Density classification (Low/Moderate/High/Very High)
+     - Shading impact assessment
+     - Land utilization efficiency
+     - Optimization recommendations
+   - Optionally create detailed analysis table in drawing
+   - Use results to optimize array spacing and configuration
+
 ### Advanced Usage
 
 1. **SolarRadiation**
@@ -121,16 +136,52 @@ CreateSolarLayers
 
 1. Create standardized layers with `CreateSolarConstructionLayers`
 2. Analyze the best position for your array with `OptimizeArray`
-3. Create the array layout with `SolarArray`
-4. Check shadow impact with `SunPath`
-5. Analyze solar radiation with `SolarRadiation`
-6. Add setback lines with `SolarSetback`
-7. Design string connections with `SolarStrings`
-8. Add components with `SolarLib`
-9. Create an information block with `SolarInfoBlock`
+3. Create the array layout with `SolarArray` (includes automatic GCR calculation)
+4. Optimize array density with `SolarGCR` for detailed Ground Coverage Ratio analysis
+5. Check shadow impact with `SunPath`
+6. Analyze solar radiation with `SolarRadiation`
+7. Add setback lines with `SolarSetback`
+8. Design string connections with `SolarStrings`
+9. Add components with `SolarLib`
+10. Create an information block with `SolarInfoBlock` (includes GCR data)
 
-## Enhanced Features (May 19, 2025 Update)
+## Ground Coverage Ratio (GCR) Analysis
 
+The Ground Coverage Ratio is a critical metric in solar array design that balances energy density against shading losses. GCR is calculated as the ratio of total solar panel area to total ground area occupied by the array.
+
+### Key GCR Concepts
+
+- **GCR Range**: Typically 0.1 (10%) to 0.9 (90%)
+- **Optimal GCR**: Usually around 0.4 (40%) for balanced performance
+- **Low GCR (< 0.25)**: Minimal shading, inefficient land use
+- **Moderate GCR (0.25-0.35)**: Balanced approach, good for most applications
+- **High GCR (0.35-0.5)**: Efficient land use, acceptable shading losses
+- **Very High GCR (> 0.5)**: Maximum density, significant shading consideration needed
+
+### GCR Analysis Features
+
+The `SolarGCR` command provides:
+- Interactive panel and array configuration
+- Multiple ground area input methods (direct, rectangular, drawing selection)
+- Comprehensive analysis with density classification
+- Shading impact assessment
+- Land utilization efficiency rating
+- Optimization recommendations
+- Optional detailed results table creation in drawing
+
+### Integration with Array Tools
+
+- `SolarArray` command automatically calculates and displays GCR
+- `OptimizeArray` can target specific GCR values
+- Construction layers include dedicated `S-ARRAY-ANALYSIS` layer for GCR documentation
+
+## Enhanced Features (June 7, 2025 Update)
+
+- **NEW: Ground Coverage Ratio Calculator** - Comprehensive GCR analysis tool with interactive interface
+- **Enhanced SolarArray Tool** - Now includes automatic GCR calculation and analysis
+- **Integrated Optimization** - OptimizeArray command can target specific GCR values
+- **Advanced Analysis Tables** - Create detailed GCR analysis documentation in drawings
+- **Construction Layer Support** - Dedicated S-ARRAY-ANALYSIS layer for GCR documentation
 - **Improved SunPathAnalysis.lsp** - More accurate solar calculations with better visualization
 - **Added SolarRadiation Analysis** - Heat map visualization of solar radiation on surfaces
 - **Enhanced OptimizeArray Tool** - Detailed recommendations for array configuration
@@ -140,4 +191,4 @@ CreateSolarLayers
 - **Updated Panel Color** - Changed S-ARRAY-PANELS layer color to 170 (blue) for better visibility in drawings
 
 Created: May 19, 2025
-Last Updated: May 19, 2025
+Last Updated: June 7, 2025
