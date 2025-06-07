@@ -20,15 +20,31 @@
     (load (strcat (getvar "DWGPREFIX") "lib\\LispCAD_PathResolver.lsp"))
     (princ "\nWarning: LispCAD_PathResolver.lsp not found")
   )
-  
-  ;; Load library loader system
-  (let ((loader-path (strcat (lc:get-lib-path) "LibraryLoader.lsp")))
+    ;; Load library loader system
+  (let ((loader-path nil))
+    (setq loader-path 
+      (cond
+        ;; Try to use path resolver if available
+        ((and (fboundp 'lc:get-lib-path) (lc:get-lib-path))
+         (strcat (lc:get-lib-path) "LibraryLoader.lsp"))
+        
+        ;; Try relative path
+        ((findfile "lib\\LibraryLoader.lsp") "lib\\LibraryLoader.lsp")
+        
+        ;; Try current directory
+        ((findfile "LibraryLoader.lsp") "LibraryLoader.lsp")
+        
+        ;; Default fallback
+        (T (strcat (getvar "DWGPREFIX") "lib\\LibraryLoader.lsp"))
+      )
+    )
+    
     (if (findfile loader-path)
       (progn
         (load loader-path)
         (princ "\nLibrary loader system initialized.")
       )
-      (princ "\nError: LibraryLoader.lsp not found")
+      (princ (strcat "\nError: LibraryLoader.lsp not found at: " loader-path))
     )
   )
   

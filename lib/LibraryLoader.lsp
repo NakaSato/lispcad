@@ -21,8 +21,31 @@
 (defun ll:init-loader ()
   "Initialize the library loader system"
   (princ "\n=== LispCAD Library Loader System ===")
-  (setq *LL:LIBRARY-PATH* (lc:get-lib-path))
+  
+  ;; Try to get lib path using multiple methods
+  (setq *LL:LIBRARY-PATH* 
+    (cond
+      ;; Method 1: Use lc:get-lib-path if available
+      ((fboundp 'lc:get-lib-path) (lc:get-lib-path))
+      
+      ;; Method 2: Use path resolver if available
+      ((fboundp 'paths:get-root) 
+       (strcat (paths:get-root) (paths:get-separator) "lib" (paths:get-separator)))
+      
+      ;; Method 3: Use environment variable
+      ((getenv "LISPCAD_PATH") 
+       (strcat (getenv "LISPCAD_PATH") "\\lib\\"))
+      
+      ;; Method 4: Relative path fallback
+      ((findfile "lib\\ComponentFramework.lsp") "lib\\")
+      
+      ;; Method 5: Current directory with lib subdir
+      (T ".\\lib\\")
+    )
+  )
+  
   (setq *LL:LOADED-LIBRARIES* nil)
+  (princ (strcat "\nLibrary path set to: " *LL:LIBRARY-PATH*))
   (princ "\nLibrary loader initialized.")
   T
 )
@@ -241,6 +264,31 @@
         nil
       )
     )
+  )
+)
+
+;; Helper function to get library path
+(defun lc:get-lib-path (/ root-path sep)
+  "Get the path to the lib directory"
+  (setq sep (if (fboundp 'paths:get-separator) (paths:get-separator) "\\"))
+  
+  (cond
+    ;; Use path resolver if available
+    ((fboundp 'paths:get-root)
+     (setq root-path (paths:get-root))
+     (if root-path 
+       (strcat root-path sep "lib" sep)
+       nil))
+    
+    ;; Use environment variable
+    ((getenv "LISPCAD_PATH")
+     (strcat (getenv "LISPCAD_PATH") sep "lib" sep))
+    
+    ;; Use relative path
+    ((findfile "lib\\ComponentFramework.lsp") "lib\\")
+    
+    ;; Default fallback
+    (T ".\\lib\\")
   )
 )
 
