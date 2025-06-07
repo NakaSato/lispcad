@@ -95,6 +95,13 @@ LispCAD is a professional LISP utility suite optimized for both GstarCAD and Aut
   - Automated document cleanup and XRef handling
   - Advanced object creation and modification
 
+- **Automatic Layer Management**
+  - **NEW**: Integrated Layer Director utility for automatic layer switching
+  - Solar project layer configurations (SOLAR-MAIN, SOLAR-PANELS, etc.)
+  - Construction phase layers (DEMO, EXISTING, NEW-WORK, ROOF)
+  - MEP discipline layers (ELECTRICAL, HVAC, PLUMBING)
+  - Smart command pattern matching and layer creation
+
 - **Professional Grade Architecture**
   - Robust error handling and recovery
   - Platform-specific optimizations
@@ -102,6 +109,17 @@ LispCAD is a professional LISP utility suite optimized for both GstarCAD and Aut
   - Comprehensive utility library
 
 ## Available Commands
+
+📚 **For comprehensive command documentation, see [COMMAND_REFERENCE.md](COMMAND_REFERENCE.md)** - Complete reference with 100+ commands, examples, and workflows.
+
+### Layer Director Commands (NEW!)
+
+| Command | Description | 
+|---------|-------------|
+| LDON | Enable automatic layer switching |
+| LDOFF | Disable automatic layer switching |
+| LayerDirectorStatus | Show Layer Director status and configuration |
+| LayerDirectorHelp | Display Layer Director help and usage |
 
 ### Core Commands
 
