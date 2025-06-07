@@ -5,9 +5,9 @@ REM Created: May 19, 2025
 
 echo ===== CAD Launcher with LispCAD =====
 echo This script will:
-echo  1. Fix any LispCAD syntax issues
-echo  2. Launch GstarCAD or AutoCAD (GstarCAD is prioritized)
-echo  3. Automatically load LispCAD
+echo  1. Launch GstarCAD or AutoCAD (GstarCAD prioritized)
+echo  2. Automatically load LispCAD Unified System
+echo  3. Load Solar Project Tools with enhanced features
 echo.
 
 REM Get the current directory where this script is located
@@ -145,20 +145,23 @@ REM Create a ScriptOnLaunch.scr file that will be executed when AutoCAD starts
 echo Creating AutoCAD startup script...
 set SCRIPT_FILE=%SCRIPT_DIR%\ScriptOnLaunch.scr
 
-echo ; LispCAD Auto-Loader Script > "%SCRIPT_FILE%"
+echo ; LispCAD Unified Auto-Loader Script > "%SCRIPT_FILE%"
 echo ; Created by AutoCAD Launcher on %date% >> "%SCRIPT_FILE%"
 echo. >> "%SCRIPT_FILE%"
-echo (alert "LispCAD Loader is starting. Please wait...") >> "%SCRIPT_FILE%"
+echo (alert "LispCAD Unified Loader is starting. Please wait...") >> "%SCRIPT_FILE%"
 echo (setvar "CMDECHO" 0) >> "%SCRIPT_FILE%"
-echo (load "%SCRIPT_DIR%Load.lsp") >> "%SCRIPT_FILE%"
-echo (prompt "\nLispCAD loaded successfully! Type ListCommands to see available commands.") >> "%SCRIPT_FILE%"
-echo (alert "LispCAD and all modules loaded successfully!") >> "%SCRIPT_FILE%"
+echo (load "%SCRIPT_DIR%LispCAD_Loader.lsp") >> "%SCRIPT_FILE%"
+echo (prompt "\nLispCAD loaded successfully! Type SolarGCR to start or LispCADHelp for commands.") >> "%SCRIPT_FILE%"
+echo (alert "LispCAD and Solar Project Tools loaded successfully!") >> "%SCRIPT_FILE%"
 
-REM Run the FixLispCADSyntax.bat if it exists to fix any syntax issues first
+REM Run the FixLispCADSyntax.bat if it exists (legacy support)
 if exist "%SCRIPT_DIR%FixLispCADSyntax.bat" (
-    echo Running syntax fixer before launching AutoCAD...
+    echo Running legacy syntax fixer...
     call "%SCRIPT_DIR%FixLispCADSyntax.bat" /silent
-    echo Syntax fixes completed.
+    echo Legacy syntax fixes completed.
+    echo.
+) else (
+    echo No legacy syntax fixer needed - using unified loader.
     echo.
 )
 
@@ -182,11 +185,13 @@ echo.
 
 start "" %AUTOCAD_EXE% /b /nologo /s "%SCRIPT_FILE%"
 
-echo AutoCAD is launching. LispCAD will be loaded automatically.
+echo AutoCAD is launching. LispCAD Unified System will load automatically.
+echo This includes all Solar Project Tools with enhanced features.
 echo.
 echo If you experience any issues:
-echo  1. Type: (load "%SCRIPT_DIR%LispCAD_WindowsLoader.lsp") in the AutoCAD command line
-echo  2. Then type: (c:LoadLispCADWindows)
+echo  1. Type: (load "%SCRIPT_DIR%LispCAD_Loader.lsp") in the AutoCAD command line
+echo  2. Then check system status with: (lc:status)
+echo  3. For Solar tools, type: SolarGCR
 echo.
 echo Press any key to exit this launcher...
 pause > nul

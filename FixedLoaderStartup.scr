@@ -1,4 +1,0 @@
-; === LISPCAD FIXED LOADER STARTUP SCRIPT === 
-; Load the fixed loader 
-(load "C:\Users\witch\OneDrive\Desktop\lispcad/FixedLoader.lsp") 
-; End of startup script 
