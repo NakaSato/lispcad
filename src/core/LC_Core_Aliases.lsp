@@ -1,23 +1,52 @@
 ;;; ===== LISPCAD CORE ALIASES =====
 ;;; Enhanced Command Aliases for LispCAD
 ;;; Previous filename: ALIASEDIT.LSP
-;;; Updated: May 20, 2025
+;;; Updated: June 7, 2025
 ;;; Collection of useful command aliases with improved error handling and multiple options
 
+;; LispCAD Function Naming Convention: Use lc: prefix for all internal functions
+;; This prevents conflicts with other LISP routines and provides clear identification
+
 ;; Safe function existence checker that works across platforms
-(defun safe-function-exists (func-name)
+(defun lc:function-exists-p (func-name)
+  "Check if a function exists - LispCAD standardized version"
   (not (null (member func-name (atoms-family 1))))
 )
 
-;; Global variables for alias customization
-(defun init-alias-settings (/ saved-state)
-  ;; Load utilities if available
-  (if (safe-function-exists 'load-utils)
-    (setq saved-state (vl-catch-all-apply 'load-utils))
+;; Unified utility loading function - removes redundancy across files
+(defun lc:load-utilities (/ utils-loaded)
+  "Load LispCAD utilities with standardized approach - removes need for local:load-utils in each file"
+  (setq utils-loaded nil)
+  
+  ;; Try global loader first
+  (if (lc:function-exists-p 'load-utils)
+    (setq utils-loaded (not (vl-catch-all-error-p (vl-catch-all-apply 'load-utils))))
   )
   
+  ;; If global failed, try direct utility loading
+  (if (not utils-loaded)
+    (let ((util-paths (list
+                       "src/utils/LispCAD_Utils.lsp"
+                       "../utils/LispCAD_Utils.lsp"
+                       "../../src/utils/LispCAD_Utils.lsp")))
+      (foreach path util-paths
+        (if (and (not utils-loaded) (findfile path))
+          (setq utils-loaded (not (vl-catch-all-error-p (vl-catch-all-apply 'load (list path)))))
+        )
+      )
+    )
+  )
+  
+  utils-loaded
+)
+
+;; Global variables for alias customization
+(defun lc:init-alias-settings (/ saved-state)
+  ;; Load utilities using standardized method
+  (lc:load-utilities)
+  
   ;; If that didn't work, try a direct load with specific paths
-  (if (not (safe-function-exists 'utils:setup-error-handler))
+  (if (not (lc:function-exists-p 'utils:setup-error-handler))
     (if (not (vl-catch-all-error-p 
                (vl-catch-all-apply 'load 
                  (list "C:/Users/witch/OneDrive/Desktop/lispcad/src/utils/LispCAD_Utils.lsp"))))
@@ -53,23 +82,23 @@
   
   ;; Restore error handler if set
   (if saved-state 
-    (if (safe-function-exists 'utils:restore-error-handler)
+    (if (lc:function-exists-p 'utils:restore-error-handler)
       (utils:restore-error-handler saved-state)
     )
   )
 )
 
 ;; Initialize settings
-(init-alias-settings)
+(lc:init-alias-settings)
 
 ;; Helper function for safe command execution
-(defun safe-command (cmd / saved-state)
+(defun lc:safe-command (cmd / saved-state)
   ;; Try to find and load utilities from multiple locations
   (if *lispcad-root*
     (if (not (vl-catch-all-error-p 
                (vl-catch-all-apply 'load 
                  (list (strcat *lispcad-root* "/../utils/LispCAD_Utils.lsp")))))
-      (if (safe-function-exists 'utils:setup-error-handler)
+      (if (lc:function-exists-p 'utils:setup-error-handler)
         (setq saved-state (utils:setup-error-handler))
       )
     )
@@ -85,7 +114,7 @@
   )
   
   ;; Restore error handler if available
-  (if (and saved-state (safe-function-exists 'utils:restore-error-handler))
+  (if (and saved-state (lc:function-exists-p 'utils:restore-error-handler))
     (utils:restore-error-handler saved-state)
   )
   
@@ -124,10 +153,10 @@
 ;; ========== PUBLISHING COMMANDS ==========
 
 ;; Publish command shortcut
-(defun c:PP () (safe-command "_.PUBLISH") (princ))
+(defun c:PP () (lc:safe-command "_.PUBLISH") (princ))
 
 ;; Plot command shortcut
-(defun c:PL () (safe-command "_.PLOT") (princ))
+(defun c:PL () (lc:safe-command "_.PLOT") (princ))
 
 ;; ========== MOVE/MODIFY COMMANDS ==========
 
@@ -546,7 +575,7 @@
 ;; Toggle alias settings
 (defun c:AliasConfig (/ opt setting current-value)
   (if (not (boundp '*alias-settings*))
-    (init-alias-settings)
+    (lc:init-alias-settings)
   )
   
   (while

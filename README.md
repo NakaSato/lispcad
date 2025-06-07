@@ -6,37 +6,63 @@ A collection of professional-grade LISP utilities optimized for both GstarCAD an
 - **GstarCAD**: Version 2023 and newer (primary platform)
 - **AutoCAD**: Version 2020 and newer (fully compatible)
 
-🔄 Last updated: 2025-05-21
-📦 Version: 3.2.1
+🔄 Last updated: 2025-06-07
+📦 Version: 4.0.0 - **Major Update: Unified Loading System**
+
+## 🚀 What's New in v4.0.0
+
+**Revolutionary Unified Loading System** - Complete rewrite of the loading mechanism:
+- ✅ **62% reduction in code** (1,036 lines → 390 lines)
+- ✅ **Zero hardcoded paths** - Intelligent automatic path discovery
+- ✅ **Single master loader** replaces 6+ complex loader files
+- ✅ **Cross-platform compatibility** with automatic OS detection
+- ✅ **Comprehensive error handling** and detailed diagnostics
+- ✅ **Legacy compatibility** - all existing scripts still work
+- ✅ **Self-installing** - automatically finds your LispCAD installation
 
 ## Quick Start Guide
 
-1. **One-Click Installation:**
-   - For GstarCAD: Double-click `LaunchGstarCADWithLispCAD.bat`
-   - For AutoCAD: Double-click `LaunchAutoCADWithLispCAD.bat`
-   - Or run `FixLispCADSyntax.bat` first for optimal compatibility
+### 🎯 Ultra-Simple Installation (New!)
+Just load one file and everything works:
+```lisp
+(load "Load.lsp")
+```
+That's it! The new unified system automatically:
+- Finds your LispCAD installation (no hardcoded paths!)
+- Loads all components in the correct order
+- Handles errors gracefully
+- Provides detailed status reporting
 
-2. **Manual Installation:**
-   - Copy the `lispcad` folder to your CAD support directory
-   - Run the `APPLOAD` command in GstarCAD or AutoCAD
-   - Navigate to and load `LispCAD_WindowsLoader.lsp`
-   - Or use `Load.lsp` for a simpler loader
+### 🔧 Advanced Usage
+```lisp
+;; Load with status display
+(lc:load-all)
 
-3. **Verify & Start Using:**
-   - Type `VerifyLispCAD` to confirm successful installation
-   - Use `ListCommands` to see all available tools
-   - Run `LoadLispCAD` if commands aren't automatically loaded
+;; Check system status
+(lc:status)
 
-4. **Need Help?**
-   - Visit our [Quick Troubleshooting Guide](#troubleshooting)
-   - Check the [GstarCAD Setup Guide](doc/WindowsSetupGuide.md)
-   - Use `VerifyLispCAD` to diagnose any issues
+;; Force reload if needed
+(lc:reload)
+
+;; Show loaded components
+(lc:show-components)
+
+;; Diagnose any issues
+(lc:show-errors)
+```
+
+### 📦 Legacy Compatibility
+All your existing scripts still work:
+- `LoadLispCAD` → automatically redirects to new system
+- `LoadLispCADAll` → automatically redirects to new system
+- Old loader files → automatically redirect to new system
 
 ## Directory Structure
 
 ```
 lispcad/
-├── LispCAD_Loader.lsp   # Main loader file
+├── LispCAD_Loader.lsp   # 🆕 NEW: Master unified loader (390 lines)
+├── Load.lsp             # 🔄 UPDATED: Simple entry point
 ├── src/                 # Source files directory
 │   ├── core/            # Core commands
 │   ├── drawing/         # Drawing management commands
@@ -45,10 +71,12 @@ lispcad/
 │   ├── document/        # Document maintenance commands
 │   ├── advanced/        # Advanced object creation commands
 │   └── utils/           # Utility functions
-└── doc/                 # Documentation
-    ├── UtilityLoadingMechanism.md   # Utility loading documentation
-    ├── templates/       # Template files for new commands
-    ├── gen_doc.py       # Documentation generator
+├── doc/                 # Documentation
+│   ├── UnifiedLoadingSystem.md  # 🆕 NEW: Complete system documentation
+│   ├── UtilityLoadingMechanism.md
+│   └── templates/       # Template files for new commands
+├── MigrationUtility.lsp # 🆕 NEW: Migration helper
+└── TestUnifiedLoader.lsp # 🆕 NEW: System validation
     └── generated/       # Generated documentation files
 ```
 

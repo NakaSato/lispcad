@@ -2,83 +2,25 @@
 ;;; Commands to change the draw order of objects
 ;;; Created: May 19, 2025
 ;;; Renamed: May 19, 2025 (Previously BringObjects.lsp)
-;;; Updated: May 19, 2025 - Fixed utility loading issues
+;;; Updated: June 7, 2025 - Removed redundant local:load-utils, uses unified lc:load-utilities
 
-;; Define a local load-utils function in case the global one isn't available
-(if (not (member 'load-utils (atoms-family 1)))
-  (defun local:load-utils (/ utils-file base-dir possible-locations)
-    (princ "\nAttempting to load utility functions from drawing module...")
-    
-    ;; Define possible locations for the utility file - prioritize absolute paths
-    (setq possible-locations (list))
-    
-    ;; Add possible locations in a specific order
-    (if (findfile "LispCAD_Loader.lsp")
-      (progn
-        (setq base-dir (vl-filename-directory (findfile "LispCAD_Loader.lsp")))
-        (if base-dir
-          (progn
-            ;; Handle trailing slash for consistency
-            (if (and (> (strlen base-dir) 0) (= (substr base-dir (strlen base-dir)) "/"))
-              (setq base-dir (substr base-dir 1 (1- (strlen base-dir))))
-            )
-            
-            ;; Add with standard structure
-            (setq possible-locations (cons (strcat base-dir "/src/utils/LispCAD_Utils.lsp") possible-locations))
-            
-            ;; Add alternative locations
-            (setq possible-locations (cons (strcat base-dir "/LispCAD_Utils.lsp") possible-locations))
-            (setq possible-locations (cons (strcat base-dir "/utils/LispCAD_Utils.lsp") possible-locations))
-          )
-        )
+;; Load the unified LispCAD core for standardized utility loading
+(if (not (member 'lc:load-utilities (atoms-family 1)))
+  (progn
+    ;; Try to load the core aliases file which contains lc:load-utilities
+    (if (findfile "src/core/LC_Core_Aliases.lsp")
+      (load "src/core/LC_Core_Aliases.lsp")
+      (if (findfile "../core/LC_Core_Aliases.lsp")
+        (load "../core/LC_Core_Aliases.lsp")
       )
     )
-    
-    ;; Add more standard paths
-    (setq possible-locations (append possible-locations
-      (list
-        "LispCAD_Utils.lsp"
-        "src/utils/LispCAD_Utils.lsp"
-        "../utils/LispCAD_Utils.lsp"
-        "../../utils/LispCAD_Utils.lsp"
-        "../../src/utils/LispCAD_Utils.lsp"
-      )
-    ))
-    
-    ;; Try each possible location with nil checks
-    (setq utils-file nil)
-    (foreach loc possible-locations
-      (if (and loc (> (strlen loc) 0) (findfile loc))
-        (progn
-          (princ (strcat "\nLoading utilities from: " loc))
-          (load (findfile loc))
-          (setq utils-file loc)
-          
-          ;; Stop trying once we find and verify one
-          (if (member 'utils:setup-error-handler (atoms-family 1))
-            (setq possible-locations nil)
-          )
-        )
-      )
-    )      ;; Return result
-    (if utils-file T nil)
   )
 )
 
 ;; Bring Selected Objects to Front
 (defun c:BF (/ ss saved-state utils-loaded)
-  ;; Try to load utilities
-  (setq utils-loaded nil)
-  
-  ;; First try global loader
-  (if (member 'load-utils (atoms-family 1))
-    (setq utils-loaded (vl-catch-all-apply 'load-utils))
-  )
-  
-  ;; If that failed, try local loader
-  (if (and (not utils-loaded) (member 'local:load-utils (atoms-family 1)))
-    (setq utils-loaded (vl-catch-all-apply 'local:load-utils))
-  )
+  ;; Load utilities using standardized method
+  (setq utils-loaded (lc:load-utilities))
   
   ;; Set up error handling if utils are loaded
   (if (and utils-loaded (member 'utils:setup-error-handler (atoms-family 1)))
@@ -107,18 +49,8 @@
 
 ;; Send Selected Objects to Back
 (defun c:BB (/ ss saved-state utils-loaded)
-  ;; Try to load utilities
-  (setq utils-loaded nil)
-  
-  ;; First try global loader
-  (if (member 'load-utils (atoms-family 1))
-    (setq utils-loaded (vl-catch-all-apply 'load-utils))
-  )
-  
-  ;; If that failed, try local loader
-  (if (and (not utils-loaded) (member 'local:load-utils (atoms-family 1)))
-    (setq utils-loaded (vl-catch-all-apply 'local:load-utils))
-  )
+  ;; Load utilities using standardized method
+  (setq utils-loaded (lc:load-utilities))
   
   ;; Set up error handling if utils are loaded
   (if (and utils-loaded (member 'utils:setup-error-handler (atoms-family 1)))
@@ -147,18 +79,8 @@
 
 ;; Above Object
 (defun c:BA (/ ss ref saved-state utils-loaded)
-  ;; Try to load utilities
-  (setq utils-loaded nil)
-  
-  ;; First try global loader
-  (if (member 'load-utils (atoms-family 1))
-    (setq utils-loaded (vl-catch-all-apply 'load-utils))
-  )
-  
-  ;; If that failed, try local loader
-  (if (and (not utils-loaded) (member 'local:load-utils (atoms-family 1)))
-    (setq utils-loaded (vl-catch-all-apply 'local:load-utils))
-  )
+  ;; Load utilities using standardized method
+  (setq utils-loaded (lc:load-utilities))
   
   ;; Set up error handling if utils are loaded
   (if (and utils-loaded (member 'utils:setup-error-handler (atoms-family 1)))
