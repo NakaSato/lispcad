@@ -90,17 +90,42 @@ LispCAD is a professional LISP utility suite optimized for both GstarCAD and Aut
   - Smart platform detection and adaptation
 
 - **Enhanced Productivity Tools**
+  - **NEW**: FastDraw v2.0 - AI-powered drawing system with multiple intelligent modes
   - Intelligent drawing management with auto-scaling
   - Quick navigation and layout switching
   - Automated document cleanup and XRef handling
   - Advanced object creation and modification
+  - **NEW**: AutoLabel system for automatic block attribute numbering
+
+- **AI-Powered Drawing System**
+  - **NEW**: FastDraw v2.0 with 5 intelligent drawing modes
+  - Rapid drawing mode for quick sketching
+  - Pattern mode for repetitive elements (solar panels, grids, arrays)
+  - Construction mode for reference geometry (centerlines, axes, guides)
+  - Batch mode for efficient bulk operations
+  - Precision mode for exact measurements and coordinates
+
+- **Automatic Block Numbering**
+  - **NEW**: Integrated AutoLabel utility for automatic attribute numbering
+  - Project-specific configurations (Solar, Construction, MEP)
+  - Real-time monitoring with reactors for immediate numbering
+  - Configurable patterns, prefixes, suffixes, and formatting
 
 - **Automatic Layer Management**
   - **NEW**: Integrated Layer Director utility for automatic layer switching
   - Solar project layer configurations (SOLAR-MAIN, SOLAR-PANELS, etc.)
   - Construction phase layers (DEMO, EXISTING, NEW-WORK, ROOF)
   - MEP discipline layers (ELECTRICAL, HVAC, PLUMBING)
+  - **NEW**: Civil Engineering layer systems (C-GRADE-*, C-DRAIN-*, C-ROAD-*, etc.)
   - Smart command pattern matching and layer creation
+
+- **Civil Engineering Capabilities**
+  - **NEW**: Comprehensive civil engineering layer system with 105+ specialized layers
+  - Earth-bound construction focus: site preparation, earthworks, foundations, roads, drainage
+  - Organized layer categories: grading, excavation, fill, foundations, roads, utilities
+  - FastDraw integration for automatic civil layer switching
+  - Professional color schemes and linetype standards
+  - Support for site development, infrastructure, and industrial projects
 
 - **Professional Grade Architecture**
   - Robust error handling and recovery
@@ -136,12 +161,29 @@ LispCAD is a professional LISP utility suite optimized for both GstarCAD and Aut
 
 | Command | Description | File |
 |---------|-------------|------|
+| FastDraw / FD | AI-powered drawing system with multiple modes | LC_Drawing_FastDraw.lsp |
+| FDRapid / FDRA | FastDraw Rapid mode - quick sketching | LC_Drawing_FastDraw.lsp |
+| FDPattern / FDPA | FastDraw Pattern mode - repetitive elements | LC_Drawing_FastDraw.lsp |
+| FDConstruction / FDCO | FastDraw Construction mode - reference geometry | LC_Drawing_FastDraw.lsp |
+| FDBatch / FDB | FastDraw Batch mode - bulk operations | LC_Drawing_FastDraw.lsp |
+| FDPrecision / FDPR | FastDraw Precision mode - exact measurements | LC_Drawing_FastDraw.lsp |
 | BA | Bring objects above a reference object | LC_Drawing_DrawOrder.lsp |
 | BB | Send selected objects to back | LC_Drawing_DrawOrder.lsp |
 | BF | Bring selected objects to front | LC_Drawing_DrawOrder.lsp |
 | CreateBeamGrid | Create a grid of beams | CreateBeamGrid.lsp |
 | CreateScale | Create a scale bar | CreateScale.lsp |
 | UnitScale | Scale objects with unit conversion | UnitScale.lsp |
+
+### Civil Engineering Layers (NEW!)
+
+| Command | Description | File |
+|---------|-------------|------|
+| CreateCivilLayers | Create complete civil engineering layer set | CivilEngineeringLayers.lsp |
+| CivilSitePrep | Create site preparation layers only | CivilEngineeringLayers.lsp |
+| CivilEarthwork | Create earthwork and grading layers only | CivilEngineeringLayers.lsp |
+| CivilDrainage | Create drainage system layers only | CivilEngineeringLayers.lsp |
+| CivilRoads | Create road and access layers only | CivilEngineeringLayers.lsp |
+| CivilFoundations | Create foundation layers only | CivilEngineeringLayers.lsp |
 
 ### Navigation Utilities
 

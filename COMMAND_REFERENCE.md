@@ -10,15 +10,16 @@
 
 1. [Quick Start](#quick-start)
 2. [Solar Project Tools](#solar-project-tools)
-3. [Drawing Management](#drawing-management)
-4. [Navigation & Zoom](#navigation--zoom)
-5. [Layer Management](#layer-management)
-6. [Core Aliases](#core-aliases)
-7. [Component Libraries](#component-libraries)
-8. [System Utilities](#system-utilities)
-9. [Testing & Diagnostics](#testing--diagnostics)
-10. [Configuration Management](#configuration-management)
-11. [Command Index](#command-index)
+3. [Civil Engineering Layers](#civil-engineering-layers)
+4. [Drawing Management](#drawing-management)
+5. [Navigation & Zoom](#navigation--zoom)
+6. [Layer Management](#layer-management)
+7. [Core Aliases](#core-aliases)
+8. [Component Libraries](#component-libraries)
+9. [System Utilities](#system-utilities)
+10. [Testing & Diagnostics](#testing--diagnostics)
+11. [Configuration Management](#configuration-management)
+12. [Command Index](#command-index)
 
 ---
 
@@ -39,6 +40,7 @@
 |---------|-------------|----------|
 | `SolarGCR` | Ground Coverage Ratio calculator | Solar |
 | `SolarTools` | Main solar tools menu | Solar |
+| `FastDraw` / `FD` | AI-powered drawing system | Drawing |
 | `BF` | Bring objects to front | Drawing |
 | `ZZ` | Zoom to selected objects | Navigation |
 | `LC` | Make object's layer current | Layer |
@@ -194,6 +196,205 @@ SolarConfig
 
 ---
 
+## Civil Engineering Layers
+
+### Overview
+The Civil Engineering Layers module provides comprehensive layer management for earth-bound civil engineering projects including site preparation, earthworks, foundations, roads, drainage systems, and infrastructure.
+
+**Key Features:**
+- 105+ specialized civil engineering layers
+- Organized into logical categories with consistent naming (C-CATEGORY-ELEMENT)
+- Professional color schemes and linetype standards
+- FastDraw integration for automatic layer switching
+- Support for site development, infrastructure, and industrial projects
+
+### Primary Civil Engineering Commands
+
+#### `CreateCivilLayers` - Complete Civil Layer Setup
+**Create comprehensive civil engineering layer set**
+
+```lisp
+CreateCivilLayers
+```
+
+**Interactive Options:**
+- **[A]ll layers** - Complete 105+ layer set for comprehensive projects
+- **[S]ite Prep** - Site preparation layers only (clearing, demolition, protection)
+- **[E]arthwork** - Earthwork and grading layers (grades, excavation, fill)
+- **[D]rainage** - Drainage system layers (storm, structures, ponds, swales)
+- **[R]oads** - Road and access layers (centerlines, pavement, base)
+- **[F]oundations** - Foundation layers (shallow, deep, footings, details)
+
+**Example:**
+```
+Command: CreateCivilLayers
+Select layer creation mode:
+[A]ll layers / [S]ite Prep / [E]arthwork / [D]rainage / [R]oads / [F]oundations: A
+Creating complete civil engineering layer set...
+✓ 105 civil engineering layers created successfully
+```
+
+#### `CivilSitePrep` - Site Preparation Layers
+**Create site preparation and demolition layers**
+
+```lisp
+CivilSitePrep
+```
+
+**Creates Layers:**
+- `C-DEMO-CLEAR` - Site clearing boundaries
+- `C-DEMO-REMOVE` - Structure removal areas  
+- `C-DEMO-PROTECT` - Tree/feature protection zones
+- `C-DEMO-SALVAGE` - Salvage material areas
+- `C-DEMO-HAZMAT` - Hazardous material locations
+
+#### `CivilEarthwork` - Earthwork and Grading Layers
+**Create earthwork, grading, and excavation layers**
+
+```lisp
+CivilEarthwork
+```
+
+**Creates Layers:**
+- **Grading:** `C-GRADE-EXIST`, `C-GRADE-PROP`, `C-GRADE-SPOT`, `C-GRADE-SLOPE`
+- **Excavation:** `C-EXCAV-LIMITS`, `C-EXCAV-TEMP`, `C-EXCAV-PERM`, `C-EXCAV-SHORING`
+- **Fill:** `C-FILL-STRUCT`, `C-FILL-COMPACT`, `C-FILL-BORROW`, `C-FILL-WASTE`
+
+#### `CivilDrainage` - Drainage System Layers
+**Create comprehensive drainage and stormwater management layers**
+
+```lisp
+CivilDrainage
+```
+
+**Creates Layers:**
+- `C-DRAIN-STORM` - Storm drainage systems
+- `C-DRAIN-SANITARY` - Sanitary sewer systems
+- `C-DRAIN-STRUCT` - Drainage structures (manholes, inlets)
+- `C-DRAIN-POND` - Retention/detention ponds
+- `C-DRAIN-SWALE` - Drainage swales and bioretention
+- `C-DRAIN-INLET` - Storm inlets and grates
+
+#### `CivilRoads` - Road and Access Layers
+**Create road, pavement, and access infrastructure layers**
+
+```lisp
+CivilRoads
+```
+
+**Creates Layers:**
+- `C-ROAD-CENTER` - Road centerlines
+- `C-ROAD-PAVE` - Pavement surfaces
+- `C-ROAD-BASE` - Base course materials
+- `C-ROAD-SUBBASE` - Subbase course
+- `C-ROAD-SHOULDER` - Road shoulders
+- `C-ROAD-CURB` - Curbs and gutters
+
+#### `CivilFoundations` - Foundation Layers
+**Create foundation and structural support layers**
+
+```lisp
+CivilFoundations
+```
+
+**Creates Layers:**
+- `C-FOUND-SHALLOW` - Shallow foundation systems
+- `C-FOUND-DEEP` - Deep foundation systems
+- `C-FOUND-FOOTINGS` - Concrete footings
+- `C-FOUND-PILES` - Pile foundations
+- `C-FOUND-REBAR` - Reinforcement details
+- `C-FOUND-DETAILS` - Foundation construction details
+
+### Layer Categories and Naming Convention
+
+**Naming Pattern:** `C-CATEGORY-ELEMENT`
+- **C-** = Civil engineering prefix
+- **CATEGORY** = Functional category (DEMO, GRADE, DRAIN, etc.)
+- **ELEMENT** = Specific element within category
+
+#### Complete Layer Categories
+
+| Category | Prefix | Description | Color Range |
+|----------|--------|-------------|-------------|
+| **Base Drawing** | C-BASE-* | Border, grid, notes, dimensions | 7-8 |
+| **Existing Conditions** | C-EXIST-* | Topography, buildings, utilities | 8-9 |
+| **Survey & Control** | C-SURV-* | Boundaries, setbacks, control points | 30-32 |
+| **Site Preparation** | C-DEMO-* | Clearing, demolition, protection | 40-45 |
+| **Earthworks & Grading** | C-GRADE-* | Grades, slopes, berms | 50-55 |
+| **Excavation & Cuts** | C-EXCAV-* | Excavation limits, shoring | 60-65 |
+| **Fill & Embankments** | C-FILL-* | Structural fill, compaction | 70-75 |
+| **Foundations** | C-FOUND-* | Shallow/deep foundations | 80-85 |
+| **Roads & Access** | C-ROAD-* | Centerlines, pavement | 90-95 |
+| **Drainage Systems** | C-DRAIN-* | Storm/sanitary, structures | 100-105 |
+| **Utilities** | C-UTIL-* | Water, sewer, gas, electrical | 110-115 |
+| **Erosion Control** | C-EROS-* | Temporary/permanent control | 120-125 |
+| **Environmental** | C-ENV-* | Wetlands, buffers, protected areas | 130-135 |
+| **Construction Staging** | C-STAGE-* | Temporary facilities, permits | 140-145 |
+
+### Integration with FastDraw System
+
+**Automatic Layer Detection:**
+When using FastDraw Construction mode, the system automatically detects civil engineering drawing context and switches to appropriate layers:
+
+```lisp
+Command: FD
+FastDraw Mode: [C]onstruction
+Drawing context detected: Grading operations
+Auto-switched to layer: C-GRADE-PROP
+```
+
+**Pattern Recognition:**
+- Grading operations → C-GRADE-* layers
+- Foundation work → C-FOUND-* layers  
+- Road construction → C-ROAD-* layers
+- Drainage design → C-DRAIN-* layers
+
+### Common Workflows
+
+#### Site Development Project
+```lisp
+; 1. Complete layer setup
+CreateCivilLayers
+Select: [A]ll layers
+
+; 2. Site preparation phase
+; Switch to C-DEMO-CLEAR for site boundaries
+; Use C-DEMO-PROTECT for tree protection zones
+
+; 3. Earthwork design
+; Use C-GRADE-EXIST for existing contours
+; Use C-GRADE-PROP for proposed grading
+
+; 4. Infrastructure
+; Use C-ROAD-* for road design
+; Use C-DRAIN-* for drainage systems
+```
+
+#### Industrial Site Development
+```lisp
+; 1. Foundation-focused setup
+CivilFoundations
+CivilEarthwork
+
+; 2. Heavy foundations
+; Use C-FOUND-DEEP for pile systems
+; Use C-EXCAV-PERM for permanent excavation
+; Use C-FOUND-REBAR for reinforcement details
+```
+
+### Documentation and Resources
+
+**Complete Documentation:**
+- [Civil Engineering Layers Guide](doc/CivilEngineeringLayersGuide.md) - Complete layer reference
+- [Civil Engineering Workflows](doc/CivilEngineeringWorkflows.md) - Practical project workflows
+
+**Integration:**
+- Compatible with FastDraw v2.0 intelligent drawing system
+- Coordinates with Solar and MEP layer systems
+- Professional color schemes for clarity and standards compliance
+
+---
+
 ## Drawing Management
 
 ### Draw Order Commands
@@ -249,6 +450,340 @@ UnitScale
 
 ```lisp
 CreateScale
+```
+
+### FastDraw v2.0 - AI-Powered Drawing System
+
+#### `FastDraw` / `FD` - Main FastDraw Command
+**Advanced AI-powered drawing system with multiple intelligent modes**
+
+```lisp
+FastDraw
+; or
+FD
+```
+
+**Drawing Modes:**
+- **RAPID** (`FDRapid` / `FDRA`) - Quick drawing with minimal clicks
+- **PATTERN** (`FDPattern` / `FDPA`) - Pattern recognition and creation
+- **CONSTRUCTION** (`FDConstruction` / `FDCO`) - Construction geometry tools
+- **BATCH** (`FDBatch` / `FDB`) - Batch drawing operations
+- **PRECISION** (`FDPrecision` / `FDPR`) - Precision drawing tools
+
+**Features:**
+- AI-powered drawing assistance
+- Context-aware entity creation
+- Smart pattern recognition
+- Batch operations for repetitive tasks
+- Construction geometry automation
+- Precision drawing with exact measurements
+- Real-time feedback and guidance
+- Optimized for GstarCAD performance
+
+#### `FDRapid` / `FDRA` - Rapid Drawing Mode
+**Quick drawing with minimal user input**
+
+```lisp
+FDRapid
+; or
+FDRA
+```
+
+**Capabilities:**
+- Smart entity type detection
+- Automatic osnap selection
+- Quick dimensioning
+- Minimal click drawing
+- Context-aware defaults
+- Instant entity creation
+
+**Usage:**
+1. Run command to enter rapid mode
+2. Click points for automatic entity creation
+3. System intelligently determines entity types
+4. Minimal prompts for maximum speed
+
+#### `FDPattern` / `FDPA` - Pattern Drawing Mode
+**Advanced pattern recognition and creation system**
+
+```lisp
+FDPattern
+; or
+FDPA
+```
+
+**Pattern Types:**
+- **Linear Patterns** - Evenly spaced objects along a line
+- **Rectangular Patterns** - Grid-based object arrays
+- **Circular Patterns** - Objects arranged in circles or arcs
+- **Freeform Patterns** - Custom pattern creation
+- **Pattern Analysis** - Detect existing patterns in drawing
+
+**Pattern Operations:**
+- **Create Smart Patterns** - AI analyzes selection and creates patterns
+- **Linear Array** - Objects along a line with spacing
+- **Rectangular Array** - Grid arrays with row/column control
+- **Circular Array** - Polar arrays with angle/count control
+
+**Example Usage:**
+```lisp
+FDPA
+; Select: Linear
+; Pick base objects, define line and spacing
+; System creates intelligent linear pattern
+```
+
+#### `FDConstruction` / `FDCO` - Construction Geometry Mode
+**Automated construction and reference geometry creation**
+
+```lisp
+FDConstruction
+; or
+FDCO
+```
+
+**Construction Tools:**
+- **Center Lines** - Automatic centerline creation for objects
+- **Axis Lines** - Principal axis line generation
+- **Guide Lines** - Reference lines at specific angles/positions
+- **Offset Lines** - Parallel lines at specified distances
+- **Perpendicular Lines** - Automatic perpendicular construction
+- **Construction Layers** - Automatic layer management for construction geometry
+
+**Features:**
+- Automatic object analysis for construction needs
+- Smart construction layer assignment
+- Perpendicular and parallel line automation
+- Center point and axis detection
+- Reference geometry creation
+
+**Example Usage:**
+```lisp
+FDCO
+; Select: Center Lines
+; Pick objects to analyze
+; System creates appropriate centerlines automatically
+```
+
+#### `FDBatch` / `FDB` - Batch Drawing Mode
+**Efficient batch operations for repetitive drawing tasks**
+
+```lisp
+FDBatch
+; or
+FDB
+```
+
+**Batch Operations:**
+- **Multiple Lines** - Draw multiple lines in sequence
+- **Circles at Points** - Create circles at specified point locations
+- **Rectangles** - Batch rectangle creation
+- **Block Insertion** - Insert multiple blocks efficiently
+- **Text Placement** - Batch text creation with consistent formatting
+
+**Features:**
+- Continuous operation mode
+- Consistent formatting across batch
+- Efficient selection and creation
+- Automatic spacing and alignment
+- Batch property application
+
+**Example Usage:**
+```lisp
+FDB
+; Select: Circles at Points
+; Pick multiple points
+; System creates circles at all selected points
+```
+
+#### `FDPrecision` / `FDPR` - Precision Drawing Mode
+**High-precision drawing with exact measurements and coordinates**
+
+```lisp
+FDPrecision
+; or
+FDPR
+```
+
+**Precision Tools:**
+- **Exact Distance** - Draw with precise distance input
+- **Angle Precise** - Exact angle specification
+- **Coordinate Entry** - Direct coordinate input for precision
+- **Precision Measure** - Exact measurement and verification
+- **Grid Align** - Snap to precise grid positions
+
+**Features:**
+- Sub-millimeter precision
+- Coordinate-based input
+- Exact distance and angle control
+- Measurement verification
+- Grid and snap integration
+- Real-time precision feedback
+
+**Example Usage:**
+```lisp
+FDPR
+; Select: Exact Distance
+; Pick start point
+; Enter exact distance: 1547.25
+; System creates line with precise length
+```
+
+### FastDraw Helper Functions
+
+**The FastDraw system includes comprehensive helper functions:**
+
+#### Pattern Creation Helpers
+- `CreateLinearPattern` - Generate linear patterns
+- `CreateRectPattern` - Generate rectangular arrays
+- `CreateCircPattern` - Generate circular patterns
+- `CreateFreeformPattern` - Generate custom patterns
+- `AnalyzePattern` - Detect and analyze existing patterns
+
+#### Array Creation Helpers
+- `CreateLinearArray` - Linear object arrays
+- `CreateRectArray` - Rectangular grids
+- `CreateCircArray` - Circular/polar arrays
+
+#### Construction Geometry Helpers
+- `CreateCenterLines` - Automatic centerline generation
+- `CreateAxisLines` - Principal axis lines
+- `CreateGuideLines` - Reference line creation
+- `CreateOffsetLines` - Parallel offset lines
+- `CreatePerpLines` - Perpendicular line construction
+
+#### Batch Operation Helpers
+- `BatchMultipleLines` - Multiple line creation
+- `BatchCirclesAtPoints` - Circles at point locations
+- `BatchRectangles` - Multiple rectangle creation
+- `BatchBlocks` - Efficient block insertion
+- `BatchText` - Batch text creation
+
+#### Precision Drawing Helpers
+- `DrawExactDistance` - Precise distance drawing
+- `DrawAnglePrecise` - Exact angle drawing
+- `CoordinateEntry` - Direct coordinate input
+- `PrecisionMeasure` - Exact measurement tools
+- `GridAlign` - Grid-based precision alignment
+
+### FastDraw Best Practices
+
+1. **Mode Selection**: Choose the appropriate mode for your task
+2. **Pattern Recognition**: Use PATTERN mode for repetitive elements
+3. **Construction Geometry**: Use CONSTRUCTION mode for reference lines
+4. **Batch Operations**: Use BATCH mode for multiple similar objects
+5. **Precision Work**: Use PRECISION mode for exact measurements
+6. **Layer Management**: FastDraw automatically manages construction layers
+7. **Performance**: System optimized for GstarCAD performance
+
+### Automatic Block Numbering (AutoLabel)
+
+#### `AutoLabel` - Main AutoLabel Command
+**Automatic numbering for block attributes with project-specific configurations**
+
+```lisp
+AutoLabel
+```
+
+**Options:**
+- `On` - Enable AutoLabel system
+- `Off` - Disable AutoLabel system  
+- `Status` - Show current status
+- `Config` - Interactive configuration
+- `Help` - Show help information
+- `Solar` - Apply solar project settings
+- `Construction` - Apply construction settings
+- `MEP` - Apply MEP project settings
+
+**Features:**
+- Automatic attribute numbering for inserted blocks
+- Project-specific configurations (Solar, Construction, MEP)
+- Wildcard pattern matching for blocks and attributes
+- Configurable prefixes, suffixes, and number formatting
+- Real-time monitoring with reactors
+
+#### `AutoLabelOn` - Enable AutoLabel
+**Enable automatic block attribute numbering**
+
+```lisp
+AutoLabelOn
+```
+
+#### `AutoLabelOff` - Disable AutoLabel
+**Disable automatic block attribute numbering**
+
+```lisp
+AutoLabelOff
+```
+
+#### `AutoLabelStatus` - Show Status
+**Display current AutoLabel configuration and status**
+
+```lisp
+AutoLabelStatus
+```
+
+**Information Shown:**
+- Active/Inactive status
+- Current project type
+- Starting number and formatting settings
+- Block and attribute patterns
+
+#### `AutoLabelConfig` - Interactive Configuration
+**Configure AutoLabel settings interactively**
+
+```lisp
+AutoLabelConfig
+```
+
+**Configuration Options:**
+- `Project` - Select project type (Solar/Construction/MEP/General)
+- `Numbering` - Configure number formatting (start, increment, length, prefix/suffix)
+- `Patterns` - Configure block and attribute patterns
+- `Reset` - Reset to default configuration
+
+#### `AutoLabelSolar` - Solar Project Configuration
+**Apply optimized settings for solar projects**
+
+```lisp
+AutoLabelSolar
+```
+
+**Solar Settings:**
+- Block patterns: `SOLAR-PANEL*`, `SOLAR-INVERTER*`, `SOLAR-ARRAY*`, `PV-*`
+- Attribute patterns: `NUMBER`, `PANEL_ID`, `INVERTER_ID`, `ARRAY_ID`, `TAG`
+- 3-digit formatting with zero padding
+- Starting from 1
+
+#### `AutoLabelConstruction` - Construction Project Configuration
+**Apply optimized settings for construction projects**
+
+```lisp
+AutoLabelConstruction
+```
+
+**Construction Settings:**
+- Block patterns: `*EQUIPMENT*`, `*ROOM*`, `*DOOR*`, `*WINDOW*`
+- Attribute patterns: `NUMBER`, `ROOM_NUM`, `EQUIP_TAG`, `ID`
+- 3-digit formatting starting from 101
+
+#### `AutoLabelMEP` - MEP Project Configuration
+**Apply optimized settings for MEP (Mechanical, Electrical, Plumbing) projects**
+
+```lisp
+AutoLabelMEP
+```
+
+**MEP Settings:**
+- Block patterns: `*PANEL*`, `*HVAC*`, `*PLUMB*`, `*ELECTRICAL*`
+- Attribute patterns: `NUMBER`, `PANEL_ID`, `EQUIP_TAG`, `DEVICE_ID`
+- 4-digit formatting for complex numbering schemes
+
+#### `AutoLabelHelp` - Show Help
+**Display comprehensive help information for AutoLabel system**
+
+```lisp
+AutoLabelHelp
 ```
 
 **Features:**
@@ -919,6 +1454,18 @@ ShowSearchPath
 | `CreateScale` | Create scale bar | Drawing |
 | `CreateWindowsUtils` | Windows utilities | System |
 | `ElecComponent` | Electrical components | Library |
+| `FastDraw` | AI-powered drawing system | Drawing |
+| `FD` | FastDraw (alias) | Drawing |
+| `FDB` | FastDraw Batch mode | Drawing |
+| `FDBatch` | FastDraw Batch mode | Drawing |
+| `FDCO` | FastDraw Construction mode | Drawing |
+| `FDConstruction` | FastDraw Construction mode | Drawing |
+| `FDPA` | FastDraw Pattern mode | Drawing |
+| `FDPattern` | FastDraw Pattern mode | Drawing |
+| `FDPR` | FastDraw Precision mode | Drawing |
+| `FDPrecision` | FastDraw Precision mode | Drawing |
+| `FDRA` | FastDraw Rapid mode | Drawing |
+| `FDRapid` | FastDraw Rapid mode | Drawing |
 | `FixLispCADPath` | Fix path issues | System |
 | `FixWindowsPaths` | Fix Windows paths | System |
 | `FireProtection` | Fire protection components | Library |
@@ -1018,13 +1565,49 @@ CreateSolarConstructionLayers
 BF    ; Bring critical elements forward
 BB    ; Send backgrounds to back
 
-;; 3. Add scale and annotations
+;; 3. Use FastDraw for efficient drawing
+FD    ; Main FastDraw system
+FDRA  ; Rapid drawing mode
+FDPA  ; Pattern creation mode
+FDCO  ; Construction geometry
+FDB   ; Batch operations
+FDPR  ; Precision drawing
+
+;; 4. Add scale and annotations
 CreateScale
 SolarInfoBlock
 
-;; 4. Navigate efficiently
+;; 5. Navigate efficiently
 ZZ    ; Zoom to specific objects
 ZV    ; View entire drawing
+```
+
+### FastDraw Workflow Examples
+
+```lisp
+;; Pattern Creation Workflow
+FDPA
+;; Select: Linear Pattern
+;; Pick base objects, define spacing
+;; System creates intelligent pattern
+
+;; Construction Geometry Workflow  
+FDCO
+;; Select: Center Lines
+;; Pick objects to analyze
+;; System creates centerlines automatically
+
+;; Batch Drawing Workflow
+FDB
+;; Select: Circles at Points
+;; Pick multiple points
+;; System creates circles at all points
+
+;; Precision Drawing Workflow
+FDPR
+;; Select: Exact Distance
+;; Pick start point, enter precise distance
+;; System creates line with exact length
 ```
 
 ### Component Library Usage

@@ -1,8 +1,8 @@
 ; LispCAD Unified Auto-Loader Script 
-; Created by AutoCAD Launcher on Sun 06/08/2025 
+; Created by AutoCAD Launcher on Mon 06/09/2025 
  
 (alert "LispCAD Unified Loader is starting. Please wait...") 
 (setvar "CMDECHO" 0) 
-(load "C:\Users\ENWUFT\OneDrive\Desktop\lispcad\LispCAD_Loader.lsp") 
+(load "C:\Users\Chanthawat.K\OneDrive\Desktop\lispcad\LispCAD_Loader.lsp") 
 (prompt "\nLispCAD loaded successfully! Type SolarGCR to start or LispCADHelp for commands.") 
 (alert "LispCAD and Solar Project Tools loaded successfully!") 
