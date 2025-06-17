@@ -45,6 +45,36 @@
   (princ)
 )
 
+;; Define simple "Aliases" command that users might expect
+(defun c:Aliases ()
+  "Main aliases command - shows help and ensures aliases are loaded"
+  (princ "\n=== LISPCAD COMMAND ALIASES ===")
+  
+  ;; First ensure aliases are loaded
+  (if (not (lc:function-exists-p 'c:AliasHelp))
+    (progn
+      (princ "\nLoading aliases...")
+      (c:LoadAliases)
+    )
+  )
+  
+  ;; Show the help if available
+  (if (lc:function-exists-p 'c:AliasHelp)
+    (c:AliasHelp)
+    (progn
+      (princ "\nAlias system not available.")
+      (princ "\nTry typing 'LoadAliases' to load the alias system.")
+    )
+  )
+  (princ)
+)
+
+;; Helper function to check if function exists (duplicated from core for safety)
+(defun lc:function-exists-p (func-name)
+  "Check if a function exists"
+  (not (null (member func-name (atoms-family 1))))
+)
+
 ;; Print command help
 (princ "\nType 'AliasHelp' for a list of available commands.")
 (princ)

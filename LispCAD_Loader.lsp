@@ -110,11 +110,10 @@
 
 (defun lc:validate-installation-path (path)
   "Validate if a path contains a valid LispCAD installation"
-  (and (lc:dir-exists-p path)
-       (or (lc:file-exists-p (lc:join-path path "src"))
+  (and (lc:dir-exists-p path)       (or (lc:file-exists-p (lc:join-path path "src"))
            (lc:file-exists-p (lc:join-path path "AutoLoadShapes.lsp"))
            (lc:file-exists-p (lc:join-path path "lib"))
-           (lc:file-exists-p (lc:join-path path "LispCAD_WindowsLoader.lsp"))))
+           (lc:file-exists-p (lc:join-path path "LispCAD_Loader.lsp"))))
 )
 
 (defun lc:find-installation-root ()

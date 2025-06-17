@@ -1133,6 +1133,48 @@ S2
 - Height analysis and reporting
 - Percentage-based scaling
 
+### Configuration Commands
+
+#### `Aliases` - Show Alias Help
+**Display all available command aliases**
+
+```lisp
+Aliases
+```
+
+**Features:**
+- Shows complete list of available aliases
+- Organized by category (Selection, Modify, Copy, Zoom, Layer, etc.)
+- Same functionality as `AliasHelp`
+
+#### `AliasHelp` - Show Alias Help
+**Display all available command aliases (same as Aliases)**
+
+```lisp
+AliasHelp
+```
+
+#### `AliasConfig` - Configure Alias Options
+**Interactive configuration of alias behavior**
+
+```lisp
+AliasConfig
+```
+
+**Configuration Options:**
+1. Enhanced selection options (SS command)
+2. Enhanced copy options (C command) 
+3. Enhanced modify options (M, RO, SCA commands)
+4. Zoom aliases (ZE, ZW, ZA, etc.)
+5. Extended aliases (additional shortcuts)
+
+#### `LoadAliases` - Load Alias System
+**Load or reload the alias system**
+
+```lisp
+LoadAliases
+```
+
 ---
 
 ## Component Libraries
@@ -1444,6 +1486,9 @@ ShowSearchPath
 
 | Command | Description | Category |
 |---------|-------------|----------|
+| `Aliases` | Show all available command aliases | Core |
+| `AliasConfig` | Configure alias behavior options | Core |
+| `AliasHelp` | Show alias help (same as Aliases) | Core |
 | `BA` | Bring objects above reference | Drawing |
 | `BB` | Send objects to back | Drawing |
 | `BF` | Bring objects to front | Drawing |

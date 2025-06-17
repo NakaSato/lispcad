@@ -668,9 +668,16 @@
   (princ "\n\nCONFIGURATION:")
   (princ "\n  AliasConfig - Configure alias options")
   (princ "\n  AliasHelp   - Show this help")
+  (princ "\n  Aliases     - Main aliases command (same as AliasHelp)")
   
   (princ "\n\nType 'AliasConfig' to enable/disable features")
   (princ)
+)
+
+;; Main Aliases command - alternative to AliasHelp for user convenience
+(defun c:Aliases ()
+  "Main aliases command - shows help (alias for AliasHelp)"
+  (c:AliasHelp)
 )
 
 ;; Find the LispCAD root directory

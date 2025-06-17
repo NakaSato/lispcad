@@ -11,7 +11,7 @@
 
 ;; Function to find LispCAD utility files
 (defun utils:find-file (filename / loader-path)
-  (setq loader-path (findfile "LispCAD_WindowsLoader.lsp"))
+  (setq loader-path (findfile "LispCAD_Loader.lsp"))
   (if loader-path
     (findfile (strcat (vl-filename-directory loader-path)
                       "/src/utils/" filename))

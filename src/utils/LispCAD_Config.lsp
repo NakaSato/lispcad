@@ -46,21 +46,20 @@
 ;; Function to find LispCAD root path
 (defun config:find-lispcad-path (/ path test-files)
   (setq test-files 
-    '("LispCAD_WindowsLoader.lsp" "README.md" "src/utils/LispCAD_Config.lsp"))
+    '("LispCAD_Loader.lsp" "README.md" "src/utils/LispCAD_Config.lsp"))
   
   ;; Try environment variable first
   (setq path (getenv "LISPCAD_PATH"))
   (if (and path (findfile (strcat path "/" (car test-files))))
     (vl-string-translate "\\" "/" path)
-    
-    ;; Try to find path from the current file
+      ;; Try to find path from the current file
     (progn
       (setq path 
         (vl-filename-directory 
-          (findfile "LispCAD_WindowsLoader.lsp")))
+          (findfile "LispCAD_Loader.lsp")))
       (if path
         (vl-string-translate "\\" "/" path)
-        "C:/Users/witch/OneDrive/Desktop/lispcad" ; Fallback default path
+        "C:/Users/ENWUFT/OneDrive/Desktop/lispcad" ; Updated fallback path
       )
     )
   )

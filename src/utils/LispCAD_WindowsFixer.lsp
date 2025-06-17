@@ -73,7 +73,7 @@
             (setq global-fixed T)
             
             ;; Create a special Windows loader file in the root directory
-            (setq win-loader-path (strcat win-path "/LispCAD_WindowsLoader.lsp"))
+            (setq win-loader-path (strcat win-path "/LispCAD_Loader.lsp"))
             (if (not (findfile win-loader-path))
               (progn
                 (princ "\n  * Creating special Windows loader file")
@@ -133,7 +133,7 @@
               (progn
                 (princ "\n  * Creating AutoCAD script file for easy loading")
                 (setq file (open win-bat-path "w"))
-                (write-line "(load \"LispCAD_WindowsLoader.lsp\")" file)
+                (write-line "(load \"LispCAD_Loader.lsp\")" file)
                 (write-line "(c:LoadLispCADWindows)" file)
                 (close file)
                 (setq fixed (1+ fixed))
@@ -160,7 +160,7 @@
           (princ "\n2. Type the command: script")
           (princ (strcat "\n3. Select the file: " win-path "\\LoadLispCAD.scr"))
           (princ "\n   OR")
-          (princ "\n   Type the command: (load \"LispCAD_WindowsLoader.lsp\")")
+          (princ "\n   Type the command: (load \"LispCAD_Loader.lsp\")")
           (princ "\n   Then type: LoadLispCADWindows")
         )
         (princ "\nSome issues fixed, but could not set global path.")

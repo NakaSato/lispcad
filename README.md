@@ -150,6 +150,9 @@ LispCAD is a professional LISP utility suite optimized for both GstarCAD and Aut
 
 | Command | Description | File |
 |---------|-------------|------|
+| Aliases | Show all available command aliases | LoadAliases.lsp |
+| AliasHelp | Show alias help (same as Aliases) | LC_Core_Aliases.lsp |
+| AliasConfig | Configure alias behavior options | LC_Core_Aliases.lsp |
 | C | Collection of useful command aliases | LC_Core_Aliases.lsp |
 | M | Collection of useful command aliases | LC_Core_Aliases.lsp |
 | N | Collection of useful command aliases | LC_Core_Aliases.lsp |
